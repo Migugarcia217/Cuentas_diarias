@@ -18,7 +18,7 @@ body {
 }
 
 .container {
-  max-width: 800px;
+  max-width: 600px;
   width: 100%;
 }
 
@@ -86,13 +86,13 @@ h1 {
 }
 
 .input-group label {
-  font-size: 13px;
+  font-size: 18px;
   color: #475569;
   font-weight: 600;
 }
 
 .input-group input {
-  width: 335px;
+  width: 235px;
   padding: 9px 12px;
   border: 1px solid #cbd5e1;
   border-radius: 20px;
