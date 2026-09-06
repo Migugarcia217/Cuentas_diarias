@@ -364,6 +364,7 @@ function cargarHistorial() {
 
     let trabajoSemanal = 0, gasolinaSemanal = 0, passSemanal = 0, ahorroSemanal = 0, deudaUberSemanal = 0, gananciaSemanal = 0;
     let yoSemanal = 0, carroSemanal = 0, gastosFijosSemanal = 0, comidaCalleSemanal = 0, gastosSemanal = 0;
+    let efectivoSemanal = 0, nequiSemanal = 0, pendienteSemanal = 0, tengoTotalSemanal = 0;
 
     dias.forEach(d => {
       trabajoSemanal += Number(d.trabajo) || 0;
@@ -378,6 +379,11 @@ function cargarHistorial() {
       gastosFijosSemanal += Number(d.gastosFijos) || 0;
       comidaCalleSemanal += Number(d.comidaCalle) || 0;
       gastosSemanal += Number(d.gastoTotal) || 0;
+
+      efectivoSemanal += Number(d.efectivo) || 0;
+      nequiSemanal += Number(d.nequi) || 0;
+      pendienteSemanal += Number(d.pendiente) || 0;
+      tengoTotalSemanal += Number(d.tengoTotal) || 0;
     });
 
     const ultimoDiaSemana = dias[dias.length - 1];
@@ -393,9 +399,13 @@ function cargarHistorial() {
     dias.forEach(r => {
       const difNum = Number(r.diferencia) || 0;
       const colorDif = difNum < 0 ? '#dc3545' : '#28a745';
+      const rEfectivo = Number(r.efectivo) || 0;
+      const rNequi = Number(r.nequi) || 0;
+      const rPendiente = Number(r.pendiente) || 0;
+      const rTotal = Number(r.tengoTotal) || 0;
 
       htmlDias += `
-        <div class="item-historial">
+        <div class="item-historial" style="border-left: 3px solid #2563eb; padding-left: 8px; margin-bottom: 8px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
             <div class="historial-fecha">📅 <strong>${r.fecha}</strong></div>
             <div>
@@ -403,10 +413,16 @@ function cargarHistorial() {
               <button class="btn-eliminar" onclick="eliminarDiaHistorial('${r.fecha}')" title="Eliminar">🗑️</button>
             </div>
           </div>
-          <div class="historial-detalles">
+          <div class="historial-detalles" style="font-size: 11px; margin-bottom: 4px;">
             <span>Ganancia Neto: <strong>${fmt(r.gananciaNeto)}</strong></span> | 
             <span>Gastos: <strong>${fmt(r.gastoTotal)}</strong></span> | 
             <span>Dif: <strong style="color:${colorDif};">${fmt(r.diferencia)}</strong></span>
+          </div>
+          <div style="background: #f1f5f9; padding: 4px 6px; border-radius: 4px; font-size: 10px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
+            <span>Efectivo: ${fmt(rEfectivo)}</span>
+            <span>Nequi: ${fmt(rNequi)}</span>
+            <span style="color: #d97706;" title="Dinero tuyo pero aún no físico en mano">⏳ Pendiente: <strong>${fmt(rPendiente)}</strong></span>
+            <span><strong>Total: ${fmt(rTotal)}</strong></span>
           </div>
         </div>
       `;
@@ -416,7 +432,7 @@ function cargarHistorial() {
       <div class="encabezado-semana">${tituloSemana}</div>
 
       <!-- TARJETAS DE DOS COLUMNAS -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
         
         <!-- COLUMNA INGRESO -->
         <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px; border-radius: 10px; font-size: 11px;">
@@ -443,6 +459,24 @@ function cargarHistorial() {
           </div>
         </div>
 
+      </div>
+
+      <!-- RESUMEN DE SALDOS Y PENDIENTES DE LA SEMANA -->
+      <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 8px 10px; border-radius: 8px; font-size: 11px; margin-bottom: 8px;">
+        <strong style="color: #1e40af; display: block; margin-bottom: 4px; font-size: 12px;">💰 SALDO Y DISPONIBILIDAD SEMANAL</strong>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+          <span>Efectivo total:</span> <strong>${fmt(efectivoSemanal)}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+          <span>Nequi total:</span> <strong>${fmt(nequiSemanal)}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 4px; color: #b45309;" title="Dinero tuyo pero aún no en mano física">
+          <span>⏳ Pendiente por cobrar:</span> <strong>${fmt(pendienteSemanal)}</strong>
+        </div>
+        <div style="border-top: 1px solid #bfdbfe; padding-top: 4px; display: flex; justify-content: space-between; font-size: 12px; color: #1e3a8a;">
+          <span><strong>Total Saldo (Incluyendo pendiente):</strong></span>
+          <strong>${fmt(tengoTotalSemanal)}</strong>
+        </div>
       </div>
 
       <!-- CUADRE GENERAL -->
@@ -570,8 +604,10 @@ function cargarGastosFijos() {
       <td>Día ${f.diaPago}</td>
       <td><strong>${fmt(ahorroPorDia)}</strong></td>
       <td><strong>${fmt(ahorroAcumuladoHoy)}</strong></td>
-      <td><button class="btn-eliminar" onclick="eliminarGastoFijo(${f.id})">X</button></td>
+      <td><button class="btn-eliminar" onclick="eliminarGastoFijo(${f.id})">X]X</button></td>
     `;
+    // Nota: Corregido un pequeño detalle del botón eliminar dentro de la tabla fija por seguridad
+    tr.querySelector('.btn-eliminar').textContent = 'X';
     tablaBody.appendChild(tr);
   });
 
