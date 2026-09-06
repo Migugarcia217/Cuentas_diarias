@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control de Gastos</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Control Financiero</h1>
+
+    <div class="campo-fecha">
+      <label for="fecha">Fecha:</label>
+      <input type="date" id="fecha">
+    </div>
+
+    <!-- SECCIÓN 1: TRABAJO -->
+    <div class="card">
+      <h2>1. Trabajo</h2>
+      <div class="input-group">
+        <label for="trabajo">Trabajo (Bruto):</label>
+        <input type="text" id="trabajo" class="moneda-input" placeholder="0">
+      </div>
+      <div class="input-group">
+        <label for="gasolina">Gasolina:</label>
+        <input type="text" id="gasolina" class="moneda-input" placeholder="0">
+      </div>
+      <div class="input-group">
+        <label for="pass">Uber Pass :</label>
+        <input type="text" id="pass" class="moneda-input" placeholder="0">
+      </div>
+      <div class="input-group">
+        <label for="ahorro">Para Gastos Fijos:</label>
+        <input type="text" id="ahorro" class="moneda-input" placeholder="0">
+      </div>
+      <div class="input-group">
+        <label for="deudaUber">Deuda Uber :</label>
+        <input type="text" id="deudaUber" class="moneda-input" placeholder="0">
+      </div>
+      <div class="resultado-item">
+        <span>Ganancia Neto:</span>
+        <strong id="gananciaNeto">$0</strong>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 2: GASTOS -->
+    <div class="card">
+      <h2>2. Gastos del Día</h2>
+      <div class="input-group">
+        <label for="yo">Yo (Personal):</label>
+        <input type="text" id="yo" class="moneda-input" placeholder="0">
+      </div>
+      <div class="input-group">
+        <label for="carro">Carro / Mantenimiento:</label>
+        <input type="text" id="carro" class="moneda-input" placeholder="0">
+      </div>
+      
+      <div class="input-group">
+        <label for="comidaCalle">Comida Calle:</label>
+        <input type="text" id="comidaCalle" class="moneda-input" placeholder="0">
+      </div>
+      <div class="resultado-item">
+        <span>Gasto Total:</span>
+        <strong id="gastoTotal">$0</strong>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 3: EFECTIVO / CUENTAS -->
+    <div class="card">
+      <h2>3. Saldo Disponible</h2>
+      <div class="input-group">
+        <label for="efectivo">Efectivo:</label>
+        <input type="text" id="efectivo" class="moneda-input" placeholder="0">
+      </div>
+      <div class="input-group">
+        <label for="nequi">Nequi / Banco:</label>
+        <input type="text" id="nequi" class="moneda-input" placeholder="0">
+      </div>
+      <div class="input-group">
+        <label for="pendiente">Pendiente por cobrar:</label>
+        <input type="text" id="pendiente" class="moneda-input" placeholder="0">
+      </div>
+      <div class="resultado-item">
+        <span>Tengo Total:</span>
+        <strong id="tengoTotal">$0</strong>
+      </div>
+    </div>
+
+    <!-- RESUMEN DE CUADRE -->
+    <div class="card resumen-card">
+      <h2>Cuadre del Día</h2>
+      <p>Tengo de Ayer: <strong id="tengoAyer">$0</strong></p>
+      <p>Debería Tener Hoy: <strong id="deberiaTener">$0</strong></p>
+      <hr>
+      <h3>Diferencia: <span id="diferencia">$0</span></h3>
+    </div>
+
+    <button id="btnGuardar" class="btn-principal">Guardar Registro del Día</button>
+
+    <!-- SECCIÓN AHORRO PROGRAMADO -->
+    <div class="card" style="margin-top: 20px;">
+      <h2>Ahorro Programado para Gastos Fijos</h2>
+      <div class="form-fijo">
+  <div class="campo-fijo">
+    <label for="nombreFijo">Gasto</label>
+    <input type="text" id="nombreFijo" placeholder="Ej: arriendo, servicios, etc.">
+  </div>
+  
+  <div class="campo-fijo">
+    <label for="valorFijo">Valor mes</label>
+    <input type="number" id="valorFijo" placeholder="Ej: 100000">
+  </div>
+  
+  <div class="campo-fijo">
+    <label for="diaFijo">Día de pago </label>
+    <input type="number" id="diaFijo" oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" placeholder="Ej: 15" >
+  </div>
+
+  <button id="btnAgregarFijo" class="btn-secundario">Agregar</button>
+</div>
+
+      <table class="tabla-fijos">
+  <thead>
+    <tr>
+      <th>Concepto</th>
+      <th>Monto</th>
+      <th>Día Pago</th>
+      <th>Ahorro/Día</th>
+      <th>Acumulado Hoy</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="tablaGastosFijos"></tbody>
+</table>
+<div class="resultado-item" style="margin-top:10px;">
+  <span>Ahorro diario total requerido:</span>
+  <strong id="totalAhorroDiarioSugerido">$0</strong>
+</div>
+<div class="resultado-item">
+  <span>Meta sugerida acumulada a hoy:</span>
+  <strong id="totalAhorroSugerido">$0</strong>
+</div>
+
+    <!-- HISTORIAL -->
+    <hr style="margin: 25px 0;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+      <h2 style="margin: 0;">Historial Registrado</h2>
+      <button id="btnBorrarHistorial" style="width: auto; padding: 6px 12px; background-color: #dc3545; font-size: 12px; color: white; border: none; border-radius: 4px; cursor: pointer;">Borrar Historial</button>
+    </div>
+    <div id="historial"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

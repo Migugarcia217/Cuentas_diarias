@@ -1,0 +1,8 @@
+{
+  "short_name": "Gastos",
+  "name": "Control Financiero Diario",
+  "start_url": "./index.html",
+  "background_color": "#ffffff",
+  "theme_color": "#28a745",
+  "display": "standalone"
+}
