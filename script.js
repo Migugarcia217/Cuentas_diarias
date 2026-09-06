@@ -159,6 +159,30 @@ function calcularTotales() {
   }
 }
 
+// Recalcular la cadena de acumulados de todos los registros históricos
+function recalcularCadenaHistorial() {
+  let registros = JSON.parse(localStorage.getItem('registrosGastos')) || [];
+  if (registros.length === 0) return;
+
+  // Ordenar de más antiguo a más reciente
+  registros.sort((a, b) => a.fecha.localeCompare(b.fecha));
+
+  let saldoAnterior = 0;
+  registros = registros.map((r, index) => {
+    if (index === 0) {
+      r.tengoAyer = 0;
+    } else {
+      r.tengoAyer = saldoAnterior;
+    }
+    r.deberiaTener = r.tengoAyer + r.gananciaNeto - r.gastoTotal;
+    r.diferencia = r.tengoTotal - r.deberiaTener;
+    saldoAnterior = r.tengoTotal;
+    return r;
+  });
+
+  localStorage.setItem('registrosGastos', JSON.stringify(registros));
+}
+
 function guardarRegistro() {
   const fechaInput = document.getElementById('fecha');
   const fechaStr = fechaInput ? fechaInput.value : '';
@@ -186,13 +210,6 @@ function guardarRegistro() {
   const pendiente = getN('pendiente');
   const tengoTotal = efectivo + nequi + pendiente;
 
-  const registrosPrevios = JSON.parse(localStorage.getItem('registrosGastos')) || [];
-  const registrosAnteriores = registrosPrevios.filter(r => r.fecha < fechaStr);
-  const tengoAyer = registrosAnteriores.length > 0 ? (registrosAnteriores[registrosAnteriores.length - 1].tengoTotal || 0) : 0;
-  
-  const deberiaTener = tengoAyer + gananciaNeto - gastoTotal;
-  const diferencia = tengoTotal - deberiaTener;
-
   const registro = {
     fecha: fechaStr,
     trabajo, gasolina, pass, ahorro, deudaUber,
@@ -200,13 +217,11 @@ function guardarRegistro() {
     yo, carro, gastosFijos, comidaCalle,
     gastoTotal,
     efectivo, nequi, pendiente,
-    tengoTotal,
-    diferencia
+    tengoTotal
   };
 
-  let registros = registrosPrevios;
+  let registros = JSON.parse(localStorage.getItem('registrosGastos')) || [];
   
-  // Reemplazar si el día ya existe o agregar si es nuevo
   const indexExistente = registros.findIndex(r => r.fecha === fechaStr);
   if (indexExistente !== -1) {
     registros[indexExistente] = registro;
@@ -214,10 +229,10 @@ function guardarRegistro() {
     registros.push(registro);
   }
 
-  // Ordenar cronológicamente
-  registros.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
-
   localStorage.setItem('registrosGastos', JSON.stringify(registros));
+  
+  // Recalcular saldos dependientes en cadena
+  recalcularCadenaHistorial();
 
   alert('Día guardado con éxito');
 
@@ -274,6 +289,8 @@ function eliminarDiaHistorial(fecha) {
     let registros = JSON.parse(localStorage.getItem('registrosGastos')) || [];
     registros = registros.filter(r => r.fecha !== fecha);
     localStorage.setItem('registrosGastos', JSON.stringify(registros));
+    
+    recalcularCadenaHistorial();
     cargarHistorial();
     calcularTotales();
   }
@@ -339,14 +356,14 @@ function cargarHistorial() {
 
   const semanasOrdenadas = Object.keys(semanas).sort((a, b) => new Date(b) - new Date(a));
 
-  semanasOrdenadas.forEach((lunesKey, index) => {
+  semanasOrdenadas.forEach((lunesKey) => {
     const dias = semanas[lunesKey];
     
-    // Totales de Trabajo
+    // Ordenar los días dentro de la semana por fecha ascendente
+    dias.sort((a, b) => a.fecha.localeCompare(b.fecha));
+
     let trabajoSemanal = 0, gasolinaSemanal = 0, passSemanal = 0, ahorroSemanal = 0, deudaUberSemanal = 0, gananciaSemanal = 0;
-    // Totales de Gastos
     let yoSemanal = 0, carroSemanal = 0, gastosFijosSemanal = 0, comidaCalleSemanal = 0, gastosSemanal = 0;
-    let diferenciaSemanal = 0;
 
     dias.forEach(d => {
       trabajoSemanal += Number(d.trabajo) || 0;
@@ -361,9 +378,10 @@ function cargarHistorial() {
       gastosFijosSemanal += Number(d.gastosFijos) || 0;
       comidaCalleSemanal += Number(d.comidaCalle) || 0;
       gastosSemanal += Number(d.gastoTotal) || 0;
-
-      diferenciaSemanal += Number(d.diferencia) || 0;
     });
+
+    const ultimoDiaSemana = dias[dias.length - 1];
+    const diferenciaSemanal = ultimoDiaSemana ? (Number(ultimoDiaSemana.diferencia) || 0) : 0;
 
     const semanaDiv = document.createElement('div');
     semanaDiv.className = 'bloque-semana';
@@ -429,7 +447,7 @@ function cargarHistorial() {
 
       <!-- CUADRE GENERAL -->
       <div style="background: #f8fafc; padding: 8px 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 10px;">
-        <span><strong>Cuadre Neto Semana:</strong></span>
+        <span><strong>Cuadre Final Semana:</strong></span>
         <strong style="color:${colorDifSemanal}; font-size: 14px;">${fmt(diferenciaSemanal)}</strong>
       </div>
 
@@ -448,25 +466,65 @@ function cargarHistorial() {
   });
 }
 
-// --- GESTIÓN DE AHORRO PROGRAMADO PARA GASTOS FIJOS ---
-function agregarGastoFijo() {
-  const nombre = document.getElementById('nombreFijo').value.trim();
-  const monto = getN('montoFijo');
-  const diaPago = parseInt(document.getElementById('diaPagoFijo').value) || 30;
+// --- GESTIÓN DE AHORRO PROGRAMADO PARA GASTOS FIJOS (BÚSQUEDA ROBUSTA) ---
 
+function agregarGastoFijo() {
+  // 1. Búsqueda por IDs comunes o selectores universales
+  let nombreEl = document.getElementById('nombreFijo') || 
+                 document.getElementById('gastoFijo') || 
+                 document.getElementById('nombreGasto');
+
+  let montoEl = document.getElementById('montoFijo') || 
+                document.getElementById('valorFijo') || 
+                document.getElementById('valorMes');
+
+  let diaPagoEl = document.getElementById('diaPagoFijo') || 
+                  document.getElementById('diaPago') || 
+                  document.getElementById('diaFijo');
+
+  // 2. Si no los encuentra por ID, busca los inputs basándose en la posición del botón "Agregar"
+  const btnAgregar = document.getElementById('btnAgregarFijo');
+  if (btnAgregar && (!nombreEl || !montoEl)) {
+    const contenedor = btnAgregar.closest('div, section, fieldset') || btnAgregar.parentElement;
+    const inputs = contenedor.querySelectorAll('input');
+    if (inputs.length >= 2) {
+      nombreEl = inputs[0];
+      montoEl = inputs[1];
+      if (inputs.length >= 3) {
+        diaPagoEl = inputs[2];
+      }
+    }
+  }
+
+  // Extraer el texto e ignorar espacios vacíos
+  const nombre = nombreEl ? nombreEl.value.trim() : '';
+
+  // Limpiar puntos, espacios y símbolos para extraer solo el valor numérico puro
+  let monto = 0;
+  if (montoEl) {
+    const rawVal = montoEl.value.toString().replace(/\D/g, '');
+    monto = parseFloat(rawVal) || 0;
+  }
+
+  const diaPago = parseInt(diaPagoEl ? diaPagoEl.value : 30, 10) || 30;
+
+  // Validación
   if (!nombre || monto <= 0) {
-    alert('Ingresa un nombre y monto válido');
+    alert('Por favor ingresa un nombre y monto válido.');
     return;
   }
 
+  // Guardar en localStorage
   let fijos = JSON.parse(localStorage.getItem('gastosFijosLista')) || [];
   fijos.push({ id: Date.now(), nombre, monto, diaPago });
   localStorage.setItem('gastosFijosLista', JSON.stringify(fijos));
 
-  document.getElementById('nombreFijo').value = '';
-  document.getElementById('montoFijo').value = '';
-  document.getElementById('diaPagoFijo').value = '';
+  // Limpiar campos tras guardar
+  if (nombreEl) nombreEl.value = '';
+  if (montoEl) montoEl.value = '';
+  if (diaPagoEl) diaPagoEl.value = '';
 
+  // Recargar la tabla en pantalla
   cargarGastosFijos();
 }
 
@@ -478,8 +536,9 @@ function eliminarGastoFijo(id) {
 }
 
 function cargarGastosFijos() {
-  const tablaBody = document.getElementById('tablaGastosFijos');
+  const tablaBody = document.getElementById('tablaGastosFijos') || document.querySelector('tbody');
   if (!tablaBody) return;
+  
   const fijos = JSON.parse(localStorage.getItem('gastosFijosLista')) || [];
   tablaBody.innerHTML = '';
 
@@ -493,18 +552,11 @@ function cargarGastosFijos() {
   fijos.forEach(f => {
     const diaPago = f.diaPago > 0 ? f.diaPago : 30;
 
-    // 1. El valor diario siempre es la cuota dividida en 30 días
+    // 1. El valor diario es la cuota mensual dividida en 30 días
     const ahorroPorDia = f.monto / 30;
 
-    // 2. Cálculo de días transcurridos dentro del ciclo de 30 días de cobro
-    let diasTranscurridos;
-    if (diaDelMes < diaPago) {
-      // Si aún no llega el día de pago este mes, venimos ahorrando desde el mes pasado
-      diasTranscurridos = 30 - (diaPago - diaDelMes);
-    } else {
-      // Si hoy es el mismo día de pago o ya pasó en este mes
-      diasTranscurridos = diaDelMes - diaPago;
-    }
+    // 2. Cálculo circular exacto de días transcurridos
+    let diasTranscurridos = (diaDelMes - diaPago + 30) % 30;
 
     const ahorroAcumuladoHoy = ahorroPorDia * diasTranscurridos;
 
