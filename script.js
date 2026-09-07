@@ -106,7 +106,7 @@ function calcularTotales() {
   // 2. GASTOS
   const yo = getN('yo');
   const carro = getN('carro');
-  const gastosFijos = getN('gastosFijos');
+  const gastosFijos = getN('gastoFijo');
   const comidaCalle = getN('comidaCalle');
 
   const gastoTotal = yo + carro + gastosFijos + comidaCalle;
@@ -201,7 +201,7 @@ function guardarRegistro() {
 
   const yo = getN('yo');
   const carro = getN('carro');
-  const gastosFijos = getN('gastosFijos');
+  const gastosFijos = getN('gastoFijo');
   const comidaCalle = getN('comidaCalle');
   const gastoTotal = yo + carro + gastosFijos + comidaCalle;
 
@@ -270,7 +270,7 @@ function editarDiaHistorial(fecha) {
 
   setInputValue('yo', registro.yo);
   setInputValue('carro', registro.carro);
-  setInputValue('gastosFijos', registro.gastosFijos);
+  setInputValue('gastoFijo', registro.gastosFijos);
   setInputValue('comidaCalle', registro.comidaCalle);
 
   setInputValue('efectivo', registro.efectivo);
@@ -614,6 +614,7 @@ function cargarGastosFijos() {
   const totalDiarioEl = document.getElementById('totalAhorroDiarioSugerido');
   if (totalDiarioEl) {
     totalDiarioEl.textContent = fmt(totalAhorroDiario);
+    
   }
 
   const totalSugeridoEl = document.getElementById('totalAhorroSugerido');
