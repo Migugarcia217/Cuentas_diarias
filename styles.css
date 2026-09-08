@@ -25,10 +25,10 @@ body {
 h1 {
   text-align: center;
   margin-bottom: 24px;
-  color: #1d4ed8; /* Azul Cobalto */
+  color: #0e0f0e; /* Azul Cobalto */
   font-size: 26px;
   font-weight: 800;
-  letter-spacing: -0.5px;
+  letter-spacing: 3px;
 }
 
 .campo-fecha {
@@ -73,7 +73,7 @@ h1 {
   font-size: 13px;
   font-weight: 800;
   margin-bottom: 16px;
-  color: #2563eb;
+  color: #0c09c2;
   text-transform: uppercase;
   letter-spacing: 0.8px;
 }
@@ -124,7 +124,7 @@ h1 {
 /* Tarjeta Cuadre del Día en tono Azul Claro */
 .resumen-card {
   background: #eff6ff;
-  color: #1e3a8a;
+  color: #0441eb;
   border: 1px solid #bfdbfe;
   box-shadow: 0 8px 20px rgba(37, 99, 235, 0.08);
 }
@@ -166,7 +166,7 @@ h1 {
   width: 100%;
   padding: 16px;
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: #ffffff;
+  color: #f8f6f6;
   border: none;
   border-radius: 16px;
   font-size: 16px;
@@ -177,8 +177,8 @@ h1 {
 
 .btn-secundario {
   padding: 10px 14px;
-  background: #2563eb;
-  color: white;
+  background: #198d74;
+  color: rgb(250, 248, 248);
   border: none;
   border-radius: 10px;
   font-size: 13px;
@@ -195,10 +195,10 @@ h1 {
 
 .form-fijo input {
   padding: 10px 12px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #15a02c;
   border-radius: 10px;
   font-size: 13px;
-  background: #f8fafc;
+  background: #050101;
 }
 
 .form-fijo #btnAgregarFijo {
@@ -251,9 +251,9 @@ h1 {
 }
 
 .encabezado-semana {
-  font-weight: 800;
-  font-size: 14px;
-  color: #2563eb;
+  font-weight: 900;
+  font-size: 19px;
+  color: #040805;
   margin-bottom: 14px;
 }
 

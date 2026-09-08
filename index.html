@@ -106,52 +106,65 @@
     <!-- SECCIÓN AHORRO PROGRAMADO -->
     <div class="card" style="margin-top: 20px;">
       <h2>Ahorro Programado para Gastos Fijos</h2>
-      <div class="form-fijo">
-  <div class="campo-fijo">
-    <label for="nombreFijo">Gasto</label>
-    <input type="text" id="nombreFijo" placeholder="Ej: arriendo, servicios, etc.">
-  </div>
-  
-  <div class="campo-fijo">
-    <label for="valorFijo">Valor mes</label>
-    <input type="number" id="valorFijo" placeholder="Ej: 100000">
-  </div>
-  
-  <div class="campo-fijo">
-    <label for="diaFijo">Día de pago </label>
-    <input type="number" id="diaFijo" oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" placeholder="Ej: 15" >
-  </div>
+      
+      <details>
+        <summary style="cursor: pointer; font-weight: 600; color: #2563eb; margin: 10px 0; font-size: 14px;">
+          Ver detalle y agregar gastos fijos
+        </summary>
+        
+        <div style="margin-top: 10px;">
+          <div class="form-fijo">
+            <div class="campo-fijo">
+              <label for="nombreFijo">Gasto</label>
+              <input type="text" id="nombreFijo" placeholder="Ej: arriendo, servicios, etc.">
+            </div>
+            
+            <div class="campo-fijo">
+              <label for="valorFijo">Valor mes</label>
+              <input type="number" id="valorFijo" placeholder="Ej: 100000">
+            </div>
+            
+            <div class="campo-fijo">
+              <label for="diaFijo">Día de pago </label>
+              <input type="number" id="diaFijo" oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" placeholder="Ej: 15">
+            </div>
 
-  <button id="btnAgregarFijo" class="btn-secundario">Agregar</button>
-</div>
+            <button id="btnAgregarFijo" class="btn-secundario">Agregar</button>
+          </div>
 
-      <table class="tabla-fijos">
-  <thead>
-    <tr>
-      <th>Concepto</th>
-      <th>Monto</th>
-      <th>Día Pago</th>
-      <th>Ahorro/Día</th>
-      <th>Acumulado Hoy</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody id="tablaGastosFijos"></tbody>
-</table>
-<div class="resultado-item" style="margin-top:10px;">
-  <span>Ahorro diario total requerido:</span>
-  <strong id="totalAhorroDiarioSugerido">$0</strong>
-</div>
-<div class="resultado-item">
-  <span>Meta sugerida acumulada a hoy:</span>
-  <strong id="totalAhorroSugerido">$0</strong>
-</div>
+          <table class="tabla-fijos">
+            <thead>
+              <tr>
+                <th>Concepto</th>
+                <th>Monto</th>
+                <th>Día Pago</th>
+                <th>Ahorro/Día</th>
+                <th>Acumulado Hoy</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tablaGastosFijos"></tbody>
+          </table>
+        </div>
+      </details>
+
+      <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 15px 0 10px 0;">
+
+      <div class="resultado-item" style="margin-top:10px;">
+        <span>Ahorro diario total requerido:</span>
+        <strong id="totalAhorroDiarioSugerido">$0</strong>
+      </div>
+      <div class="resultado-item">
+        <span>Meta sugerida acumulada a hoy:</span>
+        <strong id="totalAhorroSugerido">$0</strong>
+      </div>
+    </div>
 
     <!-- HISTORIAL -->
     <hr style="margin: 25px 0;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
       <h2 style="margin: 0;">Historial Registrado</h2>
-      <button id="btnBorrarHistorial" style="width: auto; padding: 6px 12px; background-color: #dc3545; font-size: 12px; color: white; border: none; border-radius: 4px; cursor: pointer;">Borrar Historial</button>
+      
     </div>
     <div id="historial"></div>
   </div>
