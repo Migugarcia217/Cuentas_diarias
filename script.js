@@ -116,19 +116,33 @@ function calcularTotales() {
   const nequi = getN('nequi');
   const pendiente = getN('pendiente');
 
-  const tengoTotal = efectivo + nequi + pendiente;
+  const tengoTotal = (efectivo + nequi + pendiente) - gastoTotal;
 
   // 4. CUADRE (Compara Tengo Total contra Debería Tener)
   const registros = JSON.parse(localStorage.getItem('registrosGastos')) || [];
   const fechaInput = document.getElementById('fecha');
   const fechaActual = fechaInput ? fechaInput.value : obtenerFechaLocal();
   
-  // Buscar el último registro antes de la fecha actual seleccionada
+  // Buscar el último registro estrictamente ANTERIOR a la fecha actual seleccionada
   const registrosAnteriores = registros.filter(r => r.fecha < fechaActual);
-  const tengoAyer = registrosAnteriores.length > 0 ? (registrosAnteriores[registrosAnteriores.length - 1].tengoTotal || 0) : 0;
+  
+  let tengoAyer = 0;
+  if (registrosAnteriores.length > 0) {
+    tengoAyer = Number(registrosAnteriores[registrosAnteriores.length - 1].tengoTotal) || 0;
+  } else {
+    const fechasOrdenadas = [...registros].sort((a, b) => a.fecha.localeCompare(b.fecha));
+    const idxActual = fechasOrdenadas.findIndex(r => r.fecha === fechaActual);
+    if (idxActual > 0) {
+      tengoAyer = Number(fechasOrdenadas[idxActual - 1].tengoTotal) || 0;
+    }
+  }
 
-  const deberiaTener = tengoAyer + gananciaNeto - gastoTotal;
-  const diferencia = tengoTotal - deberiaTener;
+  const inputsVacios = trabajo === 0 && gasolina === 0 && pass === 0 && ahorro === 0 && deudaUber === 0 &&
+                       yo === 0 && carro === 0 && gastosFijos === 0 && comidaCalle === 0 &&
+                       efectivo === 0 && nequi === 0 && pendiente === 0;
+
+  const deberiaTener = inputsVacios ? 0 : (tengoAyer + gananciaNeto - gastoTotal);
+  const diferencia = inputsVacios ? 0 : (tengoTotal - deberiaTener);
 
   // Mostrar en pantalla
   const elGananciaNeto = document.getElementById('gananciaNeto');
@@ -141,10 +155,10 @@ function calcularTotales() {
   if (elTengoTotal) elTengoTotal.textContent = fmt(tengoTotal);
 
   const elTengoAyer = document.getElementById('tengoAyer');
-  if (elTengoAyer) elTengoAyer.textContent = fmt(tengoAyer);
+  if (elTengoAyer) elTengoAyer.textContent = inputsVacios ? '$0' : fmt(tengoAyer);
 
   const elDeberiaTener = document.getElementById('deberiaTener');
-  if (elDeberiaTener) elDeberiaTener.textContent = fmt(deberiaTener);
+  if (elDeberiaTener) elDeberiaTener.textContent = inputsVacios ? '$0' : fmt(deberiaTener);
 
   const elDif = document.getElementById('diferencia');
   if (elDif) {
@@ -208,7 +222,8 @@ function guardarRegistro() {
   const efectivo = getN('efectivo');
   const nequi = getN('nequi');
   const pendiente = getN('pendiente');
-  const tengoTotal = efectivo + nequi + pendiente;
+
+  const tengoTotal = (efectivo + nequi + pendiente) - gastoTotal;
 
   const registro = {
     fecha: fechaStr,
@@ -246,6 +261,17 @@ function limpiarFormulario() {
   camposMoneda.forEach(input => input.value = '');
   
   establecerFechaHoy();
+
+  // Forzar limpieza visual absoluta de todos los campos de totales y cuadre
+  const idsACero = ['gananciaNeto', 'gastoTotal', 'tengoTotal', 'tengoAyer', 'deberiaTener', 'diferencia'];
+  idsACero.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.textContent = '$0';
+      if (id === 'diferencia') el.style.color = '#333333';
+    }
+  });
+
   calcularTotales();
 }
 
@@ -359,12 +385,10 @@ function cargarHistorial() {
   semanasOrdenadas.forEach((lunesKey) => {
     const dias = semanas[lunesKey];
     
-    // Ordenar los días dentro de la semana por fecha ascendente
     dias.sort((a, b) => a.fecha.localeCompare(b.fecha));
 
     let trabajoSemanal = 0, gasolinaSemanal = 0, passSemanal = 0, ahorroSemanal = 0, deudaUberSemanal = 0, gananciaSemanal = 0;
     let yoSemanal = 0, carroSemanal = 0, gastosFijosSemanal = 0, comidaCalleSemanal = 0, gastosSemanal = 0;
-    let efectivoSemanal = 0, nequiSemanal = 0, pendienteSemanal = 0, tengoTotalSemanal = 0;
 
     dias.forEach(d => {
       trabajoSemanal += Number(d.trabajo) || 0;
@@ -379,15 +403,20 @@ function cargarHistorial() {
       gastosFijosSemanal += Number(d.gastosFijos) || 0;
       comidaCalleSemanal += Number(d.comidaCalle) || 0;
       gastosSemanal += Number(d.gastoTotal) || 0;
-
-      efectivoSemanal += Number(d.efectivo) || 0;
-      nequiSemanal += Number(d.nequi) || 0;
-      pendienteSemanal += Number(d.pendiente) || 0;
-      tengoTotalSemanal += Number(d.tengoTotal) || 0;
     });
 
+    // Gastos totales de la semana EXCLUYENDO los gastos fijos
+    const gastosSinFijosSemanal = yoSemanal + carroSemanal + comidaCalleSemanal;
+
+    // Cuadre final de la semana: Ganancia Neta menos los gastos (sin incluir los gastos fijos)
+    const diferenciaSemanal = gananciaSemanal - gastosSinFijosSemanal;
+
     const ultimoDiaSemana = dias[dias.length - 1];
-    const diferenciaSemanal = ultimoDiaSemana ? (Number(ultimoDiaSemana.diferencia) || 0) : 0;
+    const efectivoSemanal = ultimoDiaSemana ? (Number(ultimoDiaSemana.efectivo) || 0) : 0;
+    const nequiSemanal = ultimoDiaSemana ? (Number(ultimoDiaSemana.nequi) || 0) : 0;
+    const pendienteSemanal = ultimoDiaSemana ? (Number(ultimoDiaSemana.pendiente) || 0) : 0;
+    
+    const tengoTotalSemanal = efectivoSemanal + nequiSemanal + pendienteSemanal;
 
     const semanaDiv = document.createElement('div');
     semanaDiv.className = 'bloque-semana';
@@ -431,15 +460,12 @@ function cargarHistorial() {
     semanaDiv.innerHTML = `
       <div class="encabezado-semana">${tituloSemana}</div>
 
-      <!-- TARJETAS DE DOS COLUMNAS -->
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-        
-        <!-- COLUMNA INGRESO -->
         <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px; border-radius: 10px; font-size: 11px;">
           <strong style="color: #166534; display: block; margin-bottom: 6px; font-size: 12px;">💼 TRABAJO</strong>
           <div>Bruto: <strong>${fmt(trabajoSemanal)}</strong></div>
           <div>Gasolina: -${fmt(gasolinaSemanal)}</div>
-          <div>Peajes: -${fmt(passSemanal)}</div>
+          <div>Pass: -${fmt(passSemanal)}</div>
           <div>Ahorro: -${fmt(ahorroSemanal)}</div>
           <div>Deuda Uber: -${fmt(deudaUberSemanal)}</div>
           <div style="margin-top: 6px; padding-top: 4px; border-top: 1px solid #bbf7d0; color: #15803d; font-size: 12px;">
@@ -447,7 +473,6 @@ function cargarHistorial() {
           </div>
         </div>
 
-        <!-- COLUMNA GASTOS -->
         <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 10px; border-radius: 10px; font-size: 11px;">
           <strong style="color: #991b1b; display: block; margin-bottom: 6px; font-size: 12px;">💸 GASTOS</strong>
           <div>Personal: ${fmt(yoSemanal)}</div>
@@ -458,10 +483,8 @@ function cargarHistorial() {
             <strong>Total: ${fmt(gastosSemanal)}</strong>
           </div>
         </div>
-
       </div>
 
-      <!-- RESUMEN DE SALDOS Y PENDIENTES DE LA SEMANA -->
       <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 8px 10px; border-radius: 8px; font-size: 11px; margin-bottom: 8px;">
         <strong style="color: #1e40af; display: block; margin-bottom: 4px; font-size: 12px;">💰 SALDO Y DISPONIBILIDAD SEMANAL</strong>
         <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
@@ -479,13 +502,11 @@ function cargarHistorial() {
         </div>
       </div>
 
-      <!-- CUADRE GENERAL -->
       <div style="background: #f8fafc; padding: 8px 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 10px;">
         <span><strong>Cuadre Final Semana:</strong></span>
         <strong style="color:${colorDifSemanal}; font-size: 14px;">${fmt(diferenciaSemanal)}</strong>
       </div>
 
-      <!-- DESPLEGABLE DE DÍAS -->
       <details>
         <summary style="cursor: pointer; font-size: 12px; color: #2563eb; font-weight: 600; padding: 4px 0;">
           Ver detalle por días (${dias.length})
@@ -500,10 +521,9 @@ function cargarHistorial() {
   });
 }
 
-// --- GESTIÓN DE AHORRO PROGRAMADO PARA GASTOS FIJOS (BÚSQUEDA ROBUSTA) ---
+// --- GESTIÓN DE AHORRO PROGRAMADO PARA GASTOS FIJOS ---
 
 function agregarGastoFijo() {
-  // 1. Búsqueda por IDs comunes o selectores universales
   let nombreEl = document.getElementById('nombreFijo') || 
                  document.getElementById('gastoFijo') || 
                  document.getElementById('nombreGasto');
@@ -516,7 +536,6 @@ function agregarGastoFijo() {
                   document.getElementById('diaPago') || 
                   document.getElementById('diaFijo');
 
-  // 2. Si no los encuentra por ID, busca los inputs basándose en la posición del botón "Agregar"
   const btnAgregar = document.getElementById('btnAgregarFijo');
   if (btnAgregar && (!nombreEl || !montoEl)) {
     const contenedor = btnAgregar.closest('div, section, fieldset') || btnAgregar.parentElement;
@@ -530,10 +549,8 @@ function agregarGastoFijo() {
     }
   }
 
-  // Extraer el texto e ignorar espacios vacíos
   const nombre = nombreEl ? nombreEl.value.trim() : '';
 
-  // Limpiar puntos, espacios y símbolos para extraer solo el valor numérico puro
   let monto = 0;
   if (montoEl) {
     const rawVal = montoEl.value.toString().replace(/\D/g, '');
@@ -542,23 +559,19 @@ function agregarGastoFijo() {
 
   const diaPago = parseInt(diaPagoEl ? diaPagoEl.value : 30, 10) || 30;
 
-  // Validación
   if (!nombre || monto <= 0) {
     alert('Por favor ingresa un nombre y monto válido.');
     return;
   }
 
-  // Guardar en localStorage
   let fijos = JSON.parse(localStorage.getItem('gastosFijosLista')) || [];
   fijos.push({ id: Date.now(), nombre, monto, diaPago });
   localStorage.setItem('gastosFijosLista', JSON.stringify(fijos));
 
-  // Limpiar campos tras guardar
   if (nombreEl) nombreEl.value = '';
   if (montoEl) montoEl.value = '';
   if (diaPagoEl) diaPagoEl.value = '';
 
-  // Recargar la tabla en pantalla
   cargarGastosFijos();
 }
 
@@ -585,13 +598,8 @@ function cargarGastosFijos() {
 
   fijos.forEach(f => {
     const diaPago = f.diaPago > 0 ? f.diaPago : 30;
-
-    // 1. El valor diario es la cuota mensual dividida en 30 días
     const ahorroPorDia = f.monto / 30;
-
-    // 2. Cálculo circular exacto de días transcurridos
     let diasTranscurridos = (diaDelMes - diaPago + 30) % 30;
-
     const ahorroAcumuladoHoy = ahorroPorDia * diasTranscurridos;
 
     totalAhorroDiario += ahorroPorDia;
@@ -604,17 +612,14 @@ function cargarGastosFijos() {
       <td>Día ${f.diaPago}</td>
       <td><strong>${fmt(ahorroPorDia)}</strong></td>
       <td><strong>${fmt(ahorroAcumuladoHoy)}</strong></td>
-      <td><button class="btn-eliminar" onclick="eliminarGastoFijo(${f.id})">X]X</button></td>
+      <td><button class="btn-eliminar" onclick="eliminarGastoFijo(${f.id})">X</button></td>
     `;
-    // Nota: Corregido un pequeño detalle del botón eliminar dentro de la tabla fija por seguridad
-    tr.querySelector('.btn-eliminar').textContent = 'X';
     tablaBody.appendChild(tr);
   });
 
   const totalDiarioEl = document.getElementById('totalAhorroDiarioSugerido');
   if (totalDiarioEl) {
     totalDiarioEl.textContent = fmt(totalAhorroDiario);
-    
   }
 
   const totalSugeridoEl = document.getElementById('totalAhorroSugerido');
