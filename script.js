@@ -98,7 +98,6 @@ function fmt(num) {
 }
 
 function calcularTotales() {
-  // 1. TRABAJO (Incluye el Ahorro restando aquí)
   const trabajo = getN('trabajo');
   const gasolina = getN('gasolina');
   const pass = getN('pass');
@@ -107,7 +106,6 @@ function calcularTotales() {
 
   const gananciaNeto = trabajo - (gasolina + pass + deudaUber + ahorro);
 
-  // 2. GASTOS DEL DÍA (Ya no incluye el ahorro)
   const yo = getN('yo');
   const carro = getN('carro');
   const comidaCalle = getN('comidaCalle');
@@ -115,14 +113,12 @@ function calcularTotales() {
 
   const gastoTotal = yo + carro + comidaCalle + gastosFijos;
 
-  // 3. EFECTIVO
   const efectivo = getN('efectivo');
   const nequi = getN('nequi');
   const pendiente = getN('pendiente');
 
   const tengoTotal = efectivo + nequi + pendiente;
 
-  // 4. CUADRE
   const registros = JSON.parse(localStorage.getItem('registrosGastos')) || [];
   const fechaInput = document.getElementById('fecha');
   const fechaActual = fechaInput ? fechaInput.value : obtenerFechaLocal();
@@ -173,6 +169,8 @@ function calcularTotales() {
       elDif.style.color = '#333333';
     }
   }
+
+  cargarGastosFijos();
 }
 
 function recalcularCadenaHistorial() {
@@ -270,6 +268,7 @@ function limpiarFormulario() {
   });
 
   calcularTotales();
+  cargarGastosFijos();
 }
 
 function editarDiaHistorial(fecha) {
@@ -314,6 +313,7 @@ function eliminarDiaHistorial(fecha) {
     recalcularCadenaHistorial();
     cargarHistorial();
     calcularTotales();
+    cargarGastosFijos();
   }
 }
 
@@ -543,7 +543,8 @@ function cargarGastosFijos() {
   tablaBody.innerHTML = '';
 
   const fechaEl = document.getElementById('fecha');
-  const partesFecha = (fechaEl ? fechaEl.value || obtenerFechaLocal() : obtenerFechaLocal()).split('-');
+  const fechaActualStr = fechaEl ? fechaEl.value || obtenerFechaLocal() : obtenerFechaLocal();
+  const partesFecha = fechaActualStr.split('-');
   const diaDelMes = parseInt(partesFecha[2], 10) || 1;
 
   let totalAhorroDiario = 0;
@@ -578,5 +579,48 @@ function cargarGastosFijos() {
   const totalSugeridoEl = document.getElementById('totalAhorroSugerido');
   if (totalSugeridoEl) {
     totalSugeridoEl.textContent = fmt(totalAhorroSugeridoAcumulado);
+  }
+
+  // --- CÁLCULO DE "LIBRE" (BÚSQUEDA ROBUSTA) ---
+  const registros = JSON.parse(localStorage.getItem('registrosGastos')) || [];
+  
+  let totalSaldoIncluyendoPendiente = 0;
+  if (registros.length > 0) {
+    registros.sort((a, b) => a.fecha.localeCompare(b.fecha));
+    const ultimoReg = registros[registros.length - 1];
+    const ef = Number(ultimoReg.efectivo) || 0;
+    const neq = Number(ultimoReg.nequi) || 0;
+    const pend = Number(ultimoReg.pendiente) || 0;
+    totalSaldoIncluyendoPendiente = ef + neq + pend;
+  } else {
+    const efectivo = getN('efectivo');
+    const nequi = getN('nequi');
+    const pendiente = getN('pendiente');
+    totalSaldoIncluyendoPendiente = efectivo + nequi + pendiente;
+  }
+
+  const metaSugeridaAcumulada = totalAhorroSugeridoAcumulado;
+  const libreValor = totalSaldoIncluyendoPendiente - metaSugeridaAcumulada;
+
+  // Busca por ID estándar o por texto dentro del recuadro de ahorro para evitar errores de ID en el HTML
+  let elLibre = document.getElementById('libre');
+  if (!elLibre) {
+    const spans = document.querySelectorAll('div, span, p');
+    for (const span of spans) {
+      if (span.textContent.trim() === 'Libre:' && span.nextElementSibling) {
+        elLibre = span.nextElementSibling;
+        elLibre.id = 'libre'; // Se lo asignamos automáticamente
+        break;
+      }
+    }
+  }
+
+  if (elLibre) {
+    elLibre.textContent = fmt(libreValor);
+    if (libreValor < 0) {
+      elLibre.style.color = '#dc3545'; // Rojo
+    } else {
+      elLibre.style.color = '#166534'; // Verde
+    }
   }
 }
