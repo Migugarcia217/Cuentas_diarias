@@ -309,3 +309,15 @@ h1 {
   grid-column: span 3;
   margin-top: 6px;
 }
+/* Estilos para la casilla de pagado en gastos fijos */
+.checkbox-pagado {
+  width: 18px;
+  height: 18px;
+  accent-color: #10b981;
+  cursor: pointer;
+}
+
+.fila-pagada {
+  opacity: 0.6;
+  background-color: #f8fafc;
+}

@@ -518,7 +518,8 @@ function agregarGastoFijo() {
   }
 
   let fijos = JSON.parse(localStorage.getItem('gastosFijosLista')) || [];
-  fijos.push({ id: Date.now(), nombre, monto, diaPago });
+  // Agregamos 'pagado: false' por defecto
+  fijos.push({ id: Date.now(), nombre, monto, diaPago, pagado: false });
   localStorage.setItem('gastosFijosLista', JSON.stringify(fijos));
 
   if (nombreEl) nombreEl.value = '';
@@ -528,24 +529,58 @@ function agregarGastoFijo() {
   cargarGastosFijos();
 }
 
-function eliminarGastoFijo(id) {
+function togglePagadoGastoFijo(id) {
   let fijos = JSON.parse(localStorage.getItem('gastosFijosLista')) || [];
-  fijos = fijos.filter(f => f.id !== id);
+  const fechaActualStr = document.getElementById('fecha') ? document.getElementById('fecha').value || obtenerFechaLocal() : obtenerFechaLocal();
+
+  fijos = fijos.map(f => {
+    if (f.id === id) {
+      f.pagado = !f.pagado;
+      // Guardamos la fecha exacta en la que se marcó como pagado
+      f.fechaPagoRealizado = f.pagado ? fechaActualStr : null;
+    }
+    return f;
+  });
+
   localStorage.setItem('gastosFijosLista', JSON.stringify(fijos));
   cargarGastosFijos();
+  calcularTotales();
 }
 
 function cargarGastosFijos() {
   const tablaBody = document.getElementById('tablaGastosFijos');
   if (!tablaBody) return;
   
-  const fijos = JSON.parse(localStorage.getItem('gastosFijosLista')) || [];
-  tablaBody.innerHTML = '';
+  let fijos = JSON.parse(localStorage.getItem('gastosFijosLista')) || [];
+  let huboCambios = false;
 
   const fechaEl = document.getElementById('fecha');
   const fechaActualStr = fechaEl ? fechaEl.value || obtenerFechaLocal() : obtenerFechaLocal();
-  const partesFecha = fechaActualStr.split('-');
-  const diaDelMes = parseInt(partesFecha[2], 10) || 1;
+  const [anioActual, mesActual, diaActual] = fechaActualStr.split('-').map(Number);
+
+  // --- AUTOMATIZACIÓN: DESMARCAR SI LLEGÓ UN NUEVO CICLO DE PAGO ---
+  fijos.forEach(f => {
+    if (f.pagado && f.fechaPagoRealizado) {
+      const [anioPago, mesPago, diaPagoReal] = f.fechaPagoRealizado.split('-').map(Number);
+      const diaPagoConfig = f.diaPago > 0 ? f.diaPago : 30;
+
+      // Determinamos si ya pasó a un mes posterior o si el día actual ya alcanzó/superó el día de pago del nuevo ciclo
+      const esNuevoMes = (anioActual > anioPago) || (anioActual === anioPago && mesActual > mesPago);
+      const llegoMismoMesDiaPago = (anioActual === anioPago && mesActual === mesPago && diaActual >= diaPagoConfig && diaPagoReal < diaPagoConfig);
+
+      if (esNuevoMes || llegoMismoMesDiaPago) {
+        f.pagado = false;
+        f.fechaPagoRealizado = null;
+        huboCambios = true;
+      }
+    }
+  });
+
+  if (huboCambios) {
+    localStorage.setItem('gastosFijosLista', JSON.stringify(fijos));
+  }
+
+  tablaBody.innerHTML = '';
 
   let totalAhorroDiario = 0;
   let totalAhorroSugeridoAcumulado = 0;
@@ -553,19 +588,40 @@ function cargarGastosFijos() {
   fijos.forEach(f => {
     const diaPago = f.diaPago > 0 ? f.diaPago : 30;
     const ahorroPorDia = f.monto / 30;
-    let diasTranscurridos = (diaDelMes - diaPago + 30) % 30;
-    const ahorroAcumuladoHoy = ahorroPorDia * diasTranscurridos;
+    
+    let diasTranscurridos = 0;
+    let ahorroAcumuladoHoy = 0;
+
+    if (f.pagado) {
+      // Si está pagado, cuenta solo el avance hacia el siguiente ciclo
+      diasTranscurridos = (diaActual - diaPago + 30) % 30;
+      ahorroAcumuladoHoy = ahorroPorDia * diasTranscurridos;
+    } else {
+      // Si NO está pagado, acumula el mes completo si ya pasó la fecha, más los días de retraso
+      if (diaActual >= diaPago) {
+        diasTranscurridos = (diaActual - diaPago);
+        ahorroAcumuladoHoy = f.monto + (ahorroPorDia * diasTranscurridos);
+      } else {
+        diasTranscurridos = (diaActual - diaPago + 30) % 30;
+        ahorroAcumuladoHoy = ahorroPorDia * diasTranscurridos;
+      }
+    }
 
     totalAhorroDiario += ahorroPorDia;
     totalAhorroSugeridoAcumulado += ahorroAcumuladoHoy;
 
     const tr = document.createElement('tr');
+    if (f.pagado) {
+      tr.className = 'fila-pagada';
+    }
+
     tr.innerHTML = `
       <td>${f.nombre}</td>
       <td>${fmt(f.monto)}</td>
       <td>Día ${f.diaPago}</td>
       <td><strong>${fmt(ahorroPorDia)}</strong></td>
       <td><strong>${fmt(ahorroAcumuladoHoy)}</strong></td>
+      <td><input type="checkbox" class="checkbox-pagado" ${f.pagado ? 'checked' : ''} onclick="togglePagadoGastoFijo(${f.id})" title="Marcar como pagado"></td>
       <td><button class="btn-eliminar" onclick="eliminarGastoFijo(${f.id})">X</button></td>
     `;
     tablaBody.appendChild(tr);
@@ -581,7 +637,7 @@ function cargarGastosFijos() {
     totalSugeridoEl.textContent = fmt(totalAhorroSugeridoAcumulado);
   }
 
-  // --- CÁLCULO DE "LIBRE" (BÚSQUEDA ROBUSTA) ---
+  // --- CÁLCULO DE "LIBRE" ---
   const registros = JSON.parse(localStorage.getItem('registrosGastos')) || [];
   
   let totalSaldoIncluyendoPendiente = 0;
@@ -602,14 +658,13 @@ function cargarGastosFijos() {
   const metaSugeridaAcumulada = totalAhorroSugeridoAcumulado;
   const libreValor = totalSaldoIncluyendoPendiente - metaSugeridaAcumulada;
 
-  // Busca por ID estándar o por texto dentro del recuadro de ahorro para evitar errores de ID en el HTML
   let elLibre = document.getElementById('libre');
   if (!elLibre) {
     const spans = document.querySelectorAll('div, span, p');
     for (const span of spans) {
       if (span.textContent.trim() === 'Libre:' && span.nextElementSibling) {
         elLibre = span.nextElementSibling;
-        elLibre.id = 'libre'; // Se lo asignamos automáticamente
+        elLibre.id = 'libre';
         break;
       }
     }
@@ -618,9 +673,9 @@ function cargarGastosFijos() {
   if (elLibre) {
     elLibre.textContent = fmt(libreValor);
     if (libreValor < 0) {
-      elLibre.style.color = '#dc3545'; // Rojo
+      elLibre.style.color = '#dc3545';
     } else {
-      elLibre.style.color = '#166534'; // Verde
+      elLibre.style.color = '#166534';
     }
   }
 }
