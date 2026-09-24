@@ -420,12 +420,12 @@ function cargarHistorial() {
               <button class="btn-eliminar" onclick="eliminarDiaHistorial('${r.fecha}')" title="Eliminar">🗑️</button>
             </div>
           </div>
-          <div class="historial-detalles" style="font-size: 11px; margin-bottom: 4px;">
+          <div class="historial-detalles" style="font-size: 16px; margin-bottom: 4px;">
             <span>Ganancia Neto: <strong>${fmt(r.gananciaNeto)}</strong></span> | 
             <span>Gastos: <strong>${fmt(r.gastoTotal)}</strong></span> | 
             <span>Dif: <strong style="color:${colorDif};">${fmt(r.diferencia)}</strong></span>
           </div>
-          <div style="background: #f1f5f9; padding: 4px 6px; border-radius: 4px; font-size: 10px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
+          <div style="background: #f1f5f9; padding: 4px 6px; border-radius: 4px; font-size: 16px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
             <span>Efectivo: ${fmt(rEfectivo)}</span>
             <span>Nequi: ${fmt(rNequi)}</span>
             <span style="color: #d97706;">⏳ Pendiente: <strong>${fmt(rPendiente)}</strong></span>
@@ -436,35 +436,36 @@ function cargarHistorial() {
     });
 
     semanaDiv.innerHTML = `
+    <strong>
       <div class="encabezado-semana">${tituloSemana}</div>
-
+      
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px; border-radius: 10px; font-size: 11px;">
-          <strong style="color: #166534; display: block; margin-bottom: 6px; font-size: 12px;">💼 TRABAJO</strong>
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px; border-radius: 10px; font-size: 18px;">
+          <strong style="color: #166534; display: block; margin-bottom: 6px; font-size: 18px;">💼 TRABAJO</strong>
           <div>Bruto: <strong>${fmt(trabajoSemanal)}</strong></div>
           <div>Gasolina: -${fmt(gasolinaSemanal)}</div>
           <div>Pass: -${fmt(passSemanal)}</div>
           <div>Deuda Uber: -${fmt(deudaUberSemanal)}</div>
           <div>Ahorro Fijos: -${fmt(ahorroSemanal)}</div>
-          <div style="margin-top: 6px; padding-top: 4px; border-top: 1px solid #bbf7d0; color: #15803d; font-size: 12px;">
+          <div style="margin-top: 6px; padding-top: 4px; border-top: 1px solid #bbf7d0; color: #15803d; font-size: 19px;">
             <strong>Neto: ${fmt(gananciaSemanal)}</strong>
           </div>
         </div>
 
-        <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 10px; border-radius: 10px; font-size: 11px;">
-          <strong style="color: #991b1b; display: block; margin-bottom: 6px; font-size: 12px;">💸 GASTOS</strong>
+        <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 10px; border-radius: 10px; font-size: 18px;">
+          <strong style="color: #991b1b; display: block; margin-bottom: 6px; font-size: 18px;">💸 GASTOS</strong>
           <div>Personal: ${fmt(yoSemanal)}</div>
           <div>Carro: ${fmt(carroSemanal)}</div>
           <div>Gastos Fijos: ${fmt(gastosFijosSemanal)}</div>
           <div>Comida: ${fmt(comidaCalleSemanal)}</div>
-          <div style="margin-top: 6px; padding-top: 4px; border-top: 1px solid #fecaca; color: #b91c1c; font-size: 12px;">
+          <div style="margin-top: 6px; padding-top: 4px; border-top: 1px solid #fecaca; color: #b91c1c; semanafont-size: 19px;">
             <strong>Total: ${fmt(gastosSemanal)}</strong>
           </div>
         </div>
       </div>
 
-      <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 8px 10px; border-radius: 8px; font-size: 11px; margin-bottom: 8px;">
-        <strong style="color: #1e40af; display: block; margin-bottom: 4px; font-size: 12px;">💰 SALDO Y DISPONIBILIDAD SEMANAL</strong>
+      <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 8px 10px; border-radius: 8px; font-size: 18px; margin-bottom: 8px;">
+        <strong style="color: #1e40af; display: block; margin-bottom: 4px; font-size: 18px;">💰 SALDO Y DISPONIBILIDAD SEMANAL</strong>
         <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
           <span>Efectivo total:</span> <strong>${fmt(efectivoSemanal)}</strong>
         </div>
@@ -474,19 +475,19 @@ function cargarHistorial() {
         <div style="display: flex; justify-content: space-between; margin-bottom: 4px; color: #b45309;">
           <span>⏳ Pendiente por cobrar:</span> <strong>${fmt(pendienteSemanal)}</strong>
         </div>
-        <div style="border-top: 1px solid #bfdbfe; padding-top: 4px; display: flex; justify-content: space-between; font-size: 12px; color: #1e3a8a;">
+        <div style="border-top: 1px solid #bfdbfe; padding-top: 4px; display: flex; justify-content: space-between; font-size: 18px; color: #1e3a8a;">
           <span><strong>Total Saldo (Incluyendo pendiente):</strong></span>
           <strong>${fmt(tengoTotalSemanal)}</strong>
         </div>
       </div>
 
-      <div style="background: #f8fafc; padding: 8px 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 10px;">
+      <div style="background: #f8fafc; padding: 8px 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 18px; margin-bottom: 10px;">
         <span><strong>Cuadre Final Semana:</strong></span>
-        <strong style="color:${colorDifSemanal}; font-size: 14px;">${fmt(diferenciaSemanal)}</strong>
+        <strong style="color:${colorDifSemanal}; font-size: 18px;">${fmt(diferenciaSemanal)}</strong>
       </div>
 
       <details>
-        <summary style="cursor: pointer; font-size: 12px; color: #2563eb; font-weight: 600; padding: 4px 0;">
+        <summary style="cursor: pointer; font-size: 18px; color: #2563eb; font-weight: 600; padding: 4px 0;">
           Ver detalle por días (${dias.length})
         </summary>
         <div class="lista-dias-semana" style="margin-top: 8px;">
@@ -678,4 +679,11 @@ function cargarGastosFijos() {
       elLibre.style.color = '#166534';
     }
   }
+}
+function eliminarGastoFijo(id) {
+  let fijos = JSON.parse(localStorage.getItem('gastosFijosLista')) || [];
+  fijos = fijos.filter(f => f.id !== id);
+  localStorage.setItem('gastosFijosLista', JSON.stringify(fijos));
+  cargarGastosFijos();
+  calcularTotales();
 }

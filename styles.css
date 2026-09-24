@@ -8,7 +8,7 @@
 }
 
 body {
-  background: #f4f6fb;
+  background: #b4eba93f;
   color: #1e293b;
   padding: 24px 12px;
   display: flex;
@@ -18,7 +18,7 @@ body {
 }
 
 .container {
-  max-width: 600px;
+  max-width: 900px;
   width: 100%;
 }
 
@@ -35,18 +35,18 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #ffffff;
+  background: #6d9af52f;
   padding: 14px 18px;
   border-radius: 16px;
   margin-bottom: 18px;
-  border: 1px solid #dbeafe;
+  border: 1px solid #030608;
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.05);
 }
 
 .campo-fecha label {
   font-weight: 700;
   font-size: 14px;
-  color: #2563eb;
+  color: #0b0d11;
 }
 
 .campo-fecha input {
@@ -55,7 +55,7 @@ h1 {
   border: 1px solid #bfdbfe;
   font-size: 14px;
   font-weight: 600;
-  color: #1e3a8a;
+  color: #07080c;
   outline: none;
   background: #eff6ff;
 }
@@ -70,7 +70,7 @@ h1 {
 }
 
 .card h2 {
-  font-size: 13px;
+  font-size: 20px;
   font-weight: 800;
   margin-bottom: 16px;
   color: #0c09c2;
@@ -109,14 +109,14 @@ h1 {
   align-items: center;
   margin-top: 16px;
   padding-top: 14px;
-  border-top: 1px dashed #cbd5e1;
-  font-size: 14px;
+  border-top: 1px dashed #75879c;
+  font-size: 20px;
   color: #64748b;
   font-weight: 600;
 }
 
 .resultado-item strong {
-  font-size: 18px;
+  font-size: 25px;
   color: #059669;
   font-weight: 800;
 }
@@ -136,7 +136,7 @@ h1 {
 .resumen-card p {
   display: flex;
   justify-content: space-between;
-  font-size: 14px;
+  font-size: 18px;
   margin-bottom: 10px;
   color: #1d4ed8;
   font-weight: 600;
@@ -229,7 +229,7 @@ h1 {
   background: #fee2e2;
   border: 1px solid #fca5a5;
   border-radius: 8px;
-  padding: 4px 8px;
+  padding: 8px 16px;
   cursor: pointer;
 }
 
@@ -237,12 +237,12 @@ h1 {
   background: #dbeafe;
   border: 1px solid #bfdbfe;
   border-radius: 8px;
-  padding: 4px 8px;
+  padding: 8px 16px;
   cursor: pointer;
 }
 
 .bloque-semana {
-  background: #ffffff;
+  background: #d5e8f5;
   border-radius: 20px;
   padding: 18px;
   margin-bottom: 18px;
