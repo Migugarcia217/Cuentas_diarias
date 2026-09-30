@@ -19,7 +19,6 @@ function getN(id) {
 function aplicarFormatoMiles(inputElement) {
     if (!inputElement) return;
     inputElement.addEventListener('input', (e) => {
-        let cursorPosition = e.target.selectionStart;
         let valorOriginal = e.target.value;
         
         // Quita todo lo que no sea número
@@ -317,7 +316,7 @@ function guardarDia() {
     const pass = getN('pass');
     const deudaUber = getN('deudaUber');
     const ahorro = getN('ahorro');
-    const gananciaNeto = trabalho = trabajo - (gasolina + pass + deudaUber + ahorro);
+    const gananciaNeto = trabajo - (gasolina + pass + deudaUber + ahorro);
 
     const yo = getN('yo');
     const carro = getN('carro');
@@ -370,6 +369,24 @@ function guardarDia() {
     localStorage.setItem('registrosGastos', JSON.stringify(registros));
 
     alert('¡Registro guardado con éxito!');
+
+    // Limpiar el formulario después de guardar de forma exitosa
+    const idsInputsMonetarios = [
+        'trabajo', 'gasolina', 'pass', 'deudaUber', 'ahorro',
+        'yo', 'carro', 'comidaCalle', 'gastoFijo', 'efectivo', 'nequi', 'pendiente'
+    ];
+
+    idsInputsMonetarios.forEach(id => {
+        const inputEl = document.getElementById(id);
+        if (inputEl) {
+            inputEl.value = '';
+        }
+    });
+
+    // Recalcular los totales para que vuelvan a $0 en la interfaz
+    calcularTotales();
+    
+    // Actualizar el historial inferior
     cargarHistorial();
 }
 
@@ -381,7 +398,6 @@ function editarDiaHistorial(fecha) {
     const fechaInput = document.getElementById('fecha');
     if (fechaInput) fechaInput.value = registro.fecha;
 
-    // Al cargar al input, lo formateamos con puntos de miles para que se vea bien
     const setVal = (id, val) => {
         const el = document.getElementById(id);
         if (el) el.value = val ? Number(val).toLocaleString('es-CO') : '';
@@ -687,7 +703,7 @@ window.addEventListener('DOMContentLoaded', () => {
         fechaInput.value = obtenerFechaLocal();
     }
 
-    // Aplicar formato automático de puntos de miles a TODOS los inputs de números/textos monetarios
+    // Aplicar formato automático de puntos de miles a todos los inputs monetarios
     const idsInputsMonetarios = [
         'valorFijo', 'trabajo', 'gasolina', 'pass', 'deudaUber', 'ahorro',
         'yo', 'carro', 'comidaCalle', 'gastoFijo', 'efectivo', 'nequi', 'pendiente'
@@ -696,7 +712,6 @@ window.addEventListener('DOMContentLoaded', () => {
     idsInputsMonetarios.forEach(id => {
         const inputEl = document.getElementById(id);
         if (inputEl) {
-            // Asegurarnos de que sean type="text" en el HTML para que el navegador acepte los puntos visuales
             aplicarFormatoMiles(inputEl);
         }
     });
