@@ -20,12 +20,9 @@ function aplicarFormatoMiles(inputElement) {
     if (!inputElement) return;
     inputElement.addEventListener('input', (e) => {
         let valorOriginal = e.target.value;
-        
-        // Quita todo lo que no sea número
         let valor = valorOriginal.replace(/\D/g, ''); 
         
         if (valor !== '') {
-            // Formatea con puntos de miles (es-CO usa puntos para miles)
             valor = Number(valor).toLocaleString('es-CO');
         }
         
@@ -161,7 +158,7 @@ function agregarGastoFijo() {
     }
 
     const concepto = inputConcepto.value.trim();
-    const valorMes = getN('valorFijo'); // Limpia los puntos automáticamente
+    const valorMes = getN('valorFijo'); 
     const diaPago = parseInt(inputDia.value) || 1;
 
     if (!concepto || valorMes <= 0) {
@@ -175,8 +172,7 @@ function agregarGastoFijo() {
         id: Date.now().toString(),
         concepto,
         valorMes,
-        diaPago,
-        pagado: false
+        diaPago
     });
 
     localStorage.setItem('listaGastosFijos', JSON.stringify(listaFijos));
@@ -197,19 +193,6 @@ function eliminarGastoFijo(id) {
     calcularTotales();
 }
 
-function togglePagadoGastoFijo(id) {
-    let listaFijos = JSON.parse(localStorage.getItem('listaGastosFijos')) || [];
-    listaFijos = listaFijos.map(item => {
-        if (item.id === id) {
-            item.pagado = !item.pagado;
-        }
-        return item;
-    });
-    localStorage.setItem('listaGastosFijos', JSON.stringify(listaFijos));
-    cargarGastosFijos();
-    calcularTotales();
-}
-
 function cargarGastosFijos() {
     const listaFijos = JSON.parse(localStorage.getItem('listaGastosFijos')) || [];
     const tbody = document.getElementById('tablaGastosFijos');
@@ -219,37 +202,36 @@ function cargarGastosFijos() {
     const fechaInput = document.getElementById('fecha');
     const hoyStr = fechaInput ? fechaInput.value : obtenerFechaLocal();
     const fechaHoy = new Date(hoyStr + 'T00:00:00');
-    const anioActual = fechaHoy.getFullYear();
-    const mesActual = fechaHoy.getMonth();
 
     let html = '';
     let totalAhorroDiarioReq = 0;
     let totalMetaAcumuladaHoy = 0;
 
+    const diasCicloBase = 30; 
+
     listaFijos.forEach(item => {
-        let fechaPago = new Date(anioActual, mesActual, item.diaPago);
-        if (fechaHoy > fechaPago) {
-            fechaPago = new Date(anioActual, mesActual + 1, item.diaPago);
+        const ahorroDiario = item.valorMes / diasCicloBase;
+        let acumuladoHoy = 0;
+
+        let anio = fechaHoy.getFullYear();
+        let mes = fechaHoy.getMonth();
+        
+        let fechaPagoCiclo = new Date(anio, mes, item.diaPago);
+
+        if (fechaHoy < fechaPagoCiclo) {
+            mes -= 1;
+            fechaPagoCiclo = new Date(anio, mes, item.diaPago);
         }
 
-        let fechaInicio = new Date(fechaPago.getFullYear(), fechaPago.getMonth() - 1, item.diaPago);
-        
-        const diffTiempoTotal = fechaPago - fechaInicio;
-        const diffDiasTotal = Math.max(1, Math.round(diffTiempoTotal / (1000 * 60 * 60 * 24)));
-        
-        const ahorroDiario = item.valorMes / diffDiasTotal;
+        let fechaInicioCiclo = fechaPagoCiclo;
 
-        const diffTiempoTrans = fechaHoy - fechaInicio;
+        const diffTiempoTrans = fechaHoy - fechaInicioCiclo;
         const diffDiasTrans = Math.max(0, Math.round(diffTiempoTrans / (1000 * 60 * 60 * 24)));
-        
-        let acumuladoHoy = ahorroDiario * diffDiasTrans;
-        if (acumuladoHoy > item.valorMes) acumuladoHoy = item.valorMes;
-        if (item.pagado) acumuladoHoy = 0;
 
-        if (!item.pagado) {
-            totalAhorroDiarioReq += ahorroDiario;
-            totalMetaAcumuladaHoy += acumuladoHoy;
-        }
+        acumuladoHoy = ahorroDiario * diffDiasTrans;
+
+        totalAhorroDiarioReq += ahorroDiario;
+        totalMetaAcumuladaHoy += acumuladoHoy;
 
         html += `
             <tr>
@@ -258,13 +240,12 @@ function cargarGastosFijos() {
                 <td>Día ${item.diaPago}</td>
                 <td style="color: var(--neon-green, #22c55e);">${fmt(ahorroDiario)}</td>
                 <td style="color: var(--neon-cyan, #38bdf8);">${fmt(acumuladoHoy)}</td>
-                <td><input type="checkbox" ${item.pagado ? 'checked' : ''} onclick="togglePagadoGastoFijo('${item.id}')" style="cursor:pointer;"></td>
-                <td><button onclick="eliminarGastoFijo('${item.id}')" style="background:#f43f5e; border:none; color:white; padding:3px 6px; border-radius:4px; cursor:pointer;" title="Eliminar">🗑️</button></td>
+                <td><button onclick="eliminarGastoFijo('${item.id}')" style="background:#f43f5e; border:none; color:white; padding:3px 6px; border-radius:4px; cursor:pointer;" title="Eliminar">🗑</button></td>
             </tr>
         `;
     });
 
-    tbody.innerHTML = html || '<tr><td colspan="7" style="text-align:center; color:#94a3b8; padding: 10px;">No hay gastos fijos registrados.</td></tr>';
+    tbody.innerHTML = html || '<tr><td colspan="6" style="text-align:center; color:#94a3b8; padding: 10px;">No hay gastos fijos registrados.</td></tr>';
 
     const registros = JSON.parse(localStorage.getItem('registrosGastos')) || [];
     let totalSaldoSemanaActual = 0;
@@ -290,6 +271,9 @@ function cargarGastosFijos() {
 
     const elMetaAcumulada = document.getElementById('totalAhorroSugerido');
     if (elMetaAcumulada) elMetaAcumulada.textContent = fmt(totalMetaAcumuladaHoy);
+
+    const elSaldoActualFijo = document.getElementById('totalSaldoActualFijo');
+    if (elSaldoActualFijo) elSaldoActualFijo.textContent = fmt(totalSaldoSemanaActual);
 
     const elLibre = document.getElementById('totalLibre');
     if (elLibre) {
@@ -370,7 +354,6 @@ function guardarDia() {
 
     alert('¡Registro guardado con éxito!');
 
-    // Limpiar el formulario después de guardar de forma exitosa
     const idsInputsMonetarios = [
         'trabajo', 'gasolina', 'pass', 'deudaUber', 'ahorro',
         'yo', 'carro', 'comidaCalle', 'gastoFijo', 'efectivo', 'nequi', 'pendiente'
@@ -383,10 +366,7 @@ function guardarDia() {
         }
     });
 
-    // Recalcular los totales para que vuelvan a $0 en la interfaz
     calcularTotales();
-    
-    // Actualizar el historial inferior
     cargarHistorial();
 }
 
@@ -451,7 +431,11 @@ function cargarHistorial() {
 
     const meses = {};
     registros.forEach(r => {
-        const [anio, mesStr] = r.fecha.split('-');
+        if (!r.fecha) return;
+        const partes = r.fecha.split('-');
+        if (partes.length < 2) return;
+        const anio = partes[0];
+        const mesStr = partes[1];
         const mesKey = `${anio}-${mesStr}`;
         if (!meses[mesKey]) {
             meses[mesKey] = [];
@@ -468,7 +452,9 @@ function cargarHistorial() {
 
     let htmlResumenesMensuales = '';
     mesesOrdenados.forEach((mesKey) => {
-        const [anio, mesNum] = mesKey.split('-');
+        const partesMes = mesKey.split('-');
+        const anio = partesMes[0];
+        const mesNum = partesMes[1];
         const diasMes = meses[mesKey];
         diasMes.sort((a, b) => a.fecha.localeCompare(b.fecha));
 
@@ -552,6 +538,7 @@ function cargarHistorial() {
 
     const semanas = {};
     registros.forEach(r => {
+        if (!r.fecha) return;
         const lunesKey = obtenerLunesSemana(r.fecha);
         if (!semanas[lunesKey]) {
             semanas[lunesKey] = [];
@@ -607,7 +594,7 @@ function cargarHistorial() {
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                         <div>📅 <strong>${r.fecha}</strong></div>
                         <div>
-                            <button onclick="editarDiaHistorial('${r.fecha}')" title="Editar" style="background:none; border:none; cursor:pointer;">✏️</button>
+                            <button onclick="editarDiaHistorial('${r.fecha}')" title="Editar" style="background:none; border:none; cursor:pointer;">✏</button>
                             <button onclick="eliminarDiaHistorial('${r.fecha}')" title="Eliminar" style="background:none; border:none; cursor:pointer;">🗑</button>
                         </div>
                     </div>
@@ -703,7 +690,6 @@ window.addEventListener('DOMContentLoaded', () => {
         fechaInput.value = obtenerFechaLocal();
     }
 
-    // Aplicar formato automático de puntos de miles a todos los inputs monetarios
     const idsInputsMonetarios = [
         'valorFijo', 'trabajo', 'gasolina', 'pass', 'deudaUber', 'ahorro',
         'yo', 'carro', 'comidaCalle', 'gastoFijo', 'efectivo', 'nequi', 'pendiente'
@@ -716,7 +702,6 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Activar cálculo automático al escribir en cualquier input
     const inputs = document.querySelectorAll('input');
     inputs.forEach(input => {
         input.addEventListener('input', () => {
