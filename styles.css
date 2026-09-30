@@ -1,323 +1,497 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
+:root {
+    --bg-deep: #030712;
+    --bg-card: rgba(17, 24, 39, 0.75);
+    --border-glow: rgba(56, 189, 248, 0.25);
+    
+    /* Colores Neón Futuristas */
+    --neon-cyan: #38bdf8;
+    --neon-green: #22c55e;
+    --neon-pink: #f43f5e;
+    --neon-purple: #c084fc;
+    --neon-yellow: #facc15;
+    
+    --text-main: #ffffff;
+    --text-muted: #cbd5e1;
+}
+
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
 }
 
 body {
-  background: #b4eba93f;
-  color: #1e293b;
-  padding: 24px 12px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
+    background-color: var(--bg-deep);
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(192, 132, 252, 0.08) 0%, transparent 40%);
+    color: var(--text-main);
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
 }
 
 .container {
-  max-width: 900px;
-  width: 100%;
+    max-width: 1300px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 24px;
+    align-content: start;
 }
 
+/* Título Estilo Holograma / Neón */
 h1 {
-  text-align: center;
-  margin-bottom: 24px;
-  color: #0e0f0e; /* Azul Cobalto */
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: 3px;
+    grid-column: span 12;
+    text-align: center;
+    margin-bottom: 10px;
+    color: var(--text-main);
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+    border-bottom: 2px solid rgba(56, 189, 248, 0.2);
+    padding-bottom: 15px;
 }
 
+/* Barra de Fecha Estilo Panel de Control */
 .campo-fecha {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #6d9af52f;
-  padding: 14px 18px;
-  border-radius: 16px;
-  margin-bottom: 18px;
-  border: 1px solid #030608;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.05);
+    grid-column: span 12;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    padding: 14px 28px;
+    border-radius: 14px;
+    border: 1px solid var(--border-glow);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    width: fit-content;
+    margin: 0 auto;
 }
 
 .campo-fecha label {
-  font-weight: 700;
-  font-size: 14px;
-  color: #0b0d11;
+    font-weight: 700;
+    color: var(--neon-cyan);
+    letter-spacing: 1px;
+    font-size: 13px;
+    text-transform: uppercase;
 }
 
 .campo-fecha input {
-  padding: 10px 50px;
-  border-radius: 10px;
-  border: 1px solid #bfdbfe;
-  font-size: 14px;
-  font-weight: 600;
-  color: #07080c;
-  outline: none;
-  background: #eff6ff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-main);
+    background: #030712;
+    outline: none;
+    box-shadow: inset 0 0 8px rgba(56, 189, 248, 0.2);
 }
 
+/* Tarjetas Estilo Glassmorphism Futurista (Fila Superior) */
 .card {
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 20px;
-  margin-bottom: 18px;
-  border: 1px solid #dbeafe;
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.04);
+    background: var(--bg-card);
+    backdrop-filter: blur(16px);
+    padding: 26px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: all 0.3s ease;
+    grid-column: span 4; 
+}
+
+.card:hover {
+    border-color: rgba(56, 189, 248, 0.4);
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.15);
 }
 
 .card h2 {
-  font-size: 20px;
-  font-weight: 800;
-  margin-bottom: 16px;
-  color: #0c09c2;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
+    font-size: 16px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.input-group {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
+/* Identidad neón por tarjeta superior */
+.card:nth-of-type(1) { border-top: 3px solid var(--neon-green); }
+.card:nth-of-type(1) h2 { color: var(--neon-green); text-shadow: 0 0 10px rgba(34, 197, 94, 0.4); }
 
-.input-group label {
-  font-size: 18px;
-  color: #475569;
-  font-weight: 600;
-}
+.card:nth-of-type(2) { border-top: 3px solid var(--neon-pink); }
+.card:nth-of-type(2) h2 { color: var(--neon-pink); text-shadow: 0 0 10px rgba(244, 63, 94, 0.4); }
 
-.input-group input {
-  width: 235px;
-  padding: 9px 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 20px;
-  text-align: right;
-  font-size: 20px;
-  font-weight: 700;
-  color: #1e293b;
-  background: #f8fafc;
-}
+.card:nth-of-type(3) { border-top: 3px solid var(--neon-cyan); }
+.card:nth-of-type(3) h2 { color: var(--neon-cyan); text-shadow: 0 0 10px rgba(56, 189, 248, 0.4); }
 
-.resultado-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px dashed #75879c;
-  font-size: 20px;
-  color: #64748b;
-  font-weight: 600;
-}
-
-.resultado-item strong {
-  font-size: 25px;
-  color: #059669;
-  font-weight: 800;
-}
-
-/* Tarjeta Cuadre del Día en tono Azul Claro */
+/* Tarjeta Cuadre del Día (Exactamente Centrada en la fila 2) */
 .resumen-card {
-  background: #eff6ff;
-  color: #0441eb;
-  border: 1px solid #bfdbfe;
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.08);
+    grid-column: 1 / span 12 !important;
+    background: linear-gradient(135deg, rgba(20, 83, 45, 0.4) 0%, rgba(15, 23, 42, 0.8) 100%);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    box-shadow: 0 0 25px rgba(34, 197, 94, 0.15);
 }
-
-.resumen-card h2 {
-  color: #2563eb;
-}
-
+.resumen-card h2 { color: var(--neon-green); text-shadow: 0 0 10px rgba(34, 197, 94, 0.4); }
 .resumen-card p {
-  display: flex;
-  justify-content: space-between;
-  font-size: 18px;
-  margin-bottom: 10px;
-  color: #1d4ed8;
-  font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+    color: var(--text-muted);
 }
-
-.resumen-card p strong {
-  color: #1e3a8a;
-  font-weight: 800;
-}
-
-.resumen-card hr {
-  border: 0;
-  height: 1px;
-  background: #bfdbfe;
-  margin: 14px 0;
-}
-
+.resumen-card p strong { color: var(--text-main); font-weight: 700; }
+.resumen-card hr { border: 0; height: 1px; background: rgba(34, 197, 94, 0.3); margin: 8px 0; }
 .resumen-card h3 {
-  display: flex;
-  justify-content: space-between;
-  font-size: 18px;
-  font-weight: 800;
-  color: #1e3a8a;
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    color: var(--neon-yellow);
+    text-shadow: 0 0 10px rgba(250, 204, 21, 0.4);
 }
 
-.btn-principal {
-  width: 100%;
-  padding: 16px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: #f8f6f6;
-  border: none;
-  border-radius: 16px;
-  font-size: 16px;
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.25);
+/* Botón Guardar Principal (Ocupa su propia línea de 12 columnas) */
+#btnGuardar {
+    grid-column: 1 / -1 !important;
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, var(--neon-cyan) 0%, #0284c7 100%);
+    color: #030712;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.2s ease;
+}
+#btnGuardar:hover {
+    box-shadow: 0 0 30px rgba(56, 189, 248, 0.8);
+    transform: translateY(-2px);
+    filter: brightness(1.1);
 }
 
-.btn-secundario {
-  padding: 10px 14px;
-  background: #198d74;
-  color: rgb(250, 248, 248);
-  border: none;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
+/* Sección Ahorro Programado (Ocupa el ancho total de 12 columnas) */
+.card-ancho-total, 
+.card:last-of-type {
+    grid-column: 1 / -1 !important;
+    width: 100%;
+    border-top: 3px solid var(--neon-purple);
+}
+.card-ancho-total h2,
+.card:last-of-type h2 { 
+    color: var(--neon-purple); 
+    text-shadow: 0 0 10px rgba(192, 132, 252, 0.4); 
 }
 
+details > summary {
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--neon-purple);
+    font-size: 16px;
+    padding: 4px 0;
+    outline: none;
+}
+.btn-agregar-fijo {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: #ffffff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+    transition: transform 0.1s ease, box-shadow 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 42px; /* Para que se alinee perfectamente con la altura de los inputs */
+}
+
+.btn-agregar-fijo:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(34, 197, 94, 0.4);
+}
+
+.btn-agregar-fijo:active {
+    transform: translateY(1px);
+}
+
+/* Formulario de Gastos Fijos Futurista */
 .form-fijo {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 14px;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: 15px;
+    align-items: flex-end;
+    background: rgba(3, 7, 18, 0.6);
+    padding: 20px;
+    border-radius: 14px;
+    border: 1px solid rgba(192, 132, 252, 0.2);
+    margin-top: 10px;
 }
 
-.form-fijo input {
-  padding: 10px 12px;
-  border: 1px solid #15a02c;
-  border-radius: 10px;
-  font-size: 13px;
-  background: #050101;
+.campo-fijo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.campo-fijo label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.campo-fijo input {
+    width: 100%;
+    padding: 10px 14px;
+    background: #030712;
+    border: 1px solid rgba(192, 132, 252, 0.3);
+    border-radius: 8px;
+    color: var(--text-main);
+    font-size: 14px;
+    outline: none;
+}
+
+.campo-fijo input:focus {
+    border-color: var(--neon-purple);
+    box-shadow: 0 0 10px rgba(192, 132, 252, 0.3);
 }
 
 .form-fijo #btnAgregarFijo {
-  grid-column: span 2;
+    background: var(--neon-purple);
+    color: #030712;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(192, 132, 252, 0.3);
+    transition: all 0.2s ease;
+}
+.form-fijo #btnAgregarFijo:hover {
+    box-shadow: 0 0 25px rgba(192, 132, 252, 0.7);
 }
 
+/* Tabla de Gastos Fijos */
 .tabla-fijos {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  font-size: 12px;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 6px;
+    margin-top: 15px;
+    font-size: 13px;
 }
 
 .tabla-fijos th {
-  text-align: left;
-  padding: 10px 6px;
-  color: #64748b;
-  border-bottom: 2px solid #e2e8f0;
+    text-align: left;
+    padding: 10px;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1px;
 }
 
 .tabla-fijos td {
-  padding: 12px 6px;
-  border-bottom: 1px solid #f1f5f9;
+    padding: 12px 10px;
+    background: rgba(3, 7, 18, 0.5);
+    color: var(--text-main);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
+.tabla-fijos td:first-child { border-left: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px 0 0 8px; }
+.tabla-fijos td:last-child { border-right: 1px solid rgba(255, 255, 255, 0.05); border-radius: 0 8px 8px 0; }
 
 .btn-eliminar {
-  color: #dc2626;
-  background: #fee2e2;
-  border: 1px solid #fca5a5;
-  border-radius: 8px;
-  padding: 8px 16px;
-  cursor: pointer;
+    color: var(--neon-pink);
+    background: rgba(244, 63, 94, 0.1);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
 }
 
 .btn-editar {
-  background: #dbeafe;
-  border: 1px solid #bfdbfe;
-  border-radius: 8px;
-  padding: 8px 16px;
-  cursor: pointer;
+    color: var(--neon-cyan);
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 6px;
+    font-weight: 600;
 }
 
-.bloque-semana {
-  background: #d5e8f5;
-  border-radius: 20px;
-  padding: 18px;
-  margin-bottom: 18px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.03);
+/* Título de Historial Registrado */
+.titulo-historial {
+    grid-column: 1 / -1 !important;
+    width: 100%;
+    text-align: center !important;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--neon-yellow);
+    margin-top: 35px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(250, 204, 21, 0.4);
+}
+
+/* Contenedor del Historial */
+#historial {
+    grid-column: 1 / -1 !important;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 20px;
+}
+
+.bloque-semana, .item-historial {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid rgba(250, 204, 21, 0.25);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .encabezado-semana {
-  font-weight: 900;
-  font-size: 19px;
-  color: #040805;
-  margin-bottom: 14px;
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--neon-yellow);
+    margin-bottom: 14px;
+    border-bottom: 1px dashed rgba(250, 204, 21, 0.3);
+    padding-bottom: 8px;
+    text-shadow: 0 0 8px rgba(250, 204, 21, 0.3);
 }
 
-.item-historial {
-  background: #f8fafc;
-  padding: 12px;
-  border-radius: 12px;
-  margin-bottom: 10px;
-  border: 1px solid #e2e8f0;
-}
-
+/* ========================================================== */
+/* ESTILOS ESPECÍFICOS PARA EL TEXTO DEL HISTORIAL (VISIBILIDAD) */
+/* ========================================================== */
 .historial-detalles {
-  font-size: 12px;
-  color: #64748b;
-  margin-top: 6px;
-}
-/* Distribución del formulario */
-.form-fijo {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr; /* Tres columnas en una fila */
-  gap: 10px;
-  margin-bottom: 14px;
+    font-size: 33px;
+    color: #ffffff; 
+    line-height: 1.7;
+    font-weight: 500;
 }
 
-/* Contenedor individual con el enunciado arriba y la casilla abajo */
-.campo-fijo {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.historial-detalles span, 
+.historial-detalles strong {
+    color: #ffffff;
 }
 
-/* Estilo para los enunciados fuera de la casilla */
-.campo-fijo label {
-  font-size: 12px;
-  font-weight: 700;
-  color: #2563eb; /* Color azul (ajústalo al que prefieras) */
+.historial-detalles .trabajo, 
+.historial-detalles strong:nth-child(odd),
+.historial-detalles b {
+    color: var(--neon-green); 
 }
 
-/* Estilo de la casilla */
-.campo-fijo input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #cbd5e1;
-  border-radius: 10px;
-  font-size: 13px;
-  background: #f8fafc;
-  color: #1e293b;
-  box-sizing: border-box;
+.historial-detalles .gasto,
+.historial-detalles .negativo {
+    color: var(--neon-pink); 
+}
+/* ========================================================== */
+
+/* Campos de entrada numéricos estilo Terminal */
+.input-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
 }
 
-/* El botón abarca las 3 columnas */
-.form-fijo #btnAgregarFijo {
-  grid-column: span 3;
-  margin-top: 6px;
+.input-group label {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 600;
 }
-/* Estilos para la casilla de pagado en gastos fijos */
+
+.input-group input {
+    width: 160px;
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    text-align: right;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-main);
+    background: #030712;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.input-group input:focus {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+}
+
+.resultado-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.resultado-item strong {
+    font-size: 20px;
+    color: var(--neon-green);
+    font-weight: 800;
+    text-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+}
+
+/* Checkbox Pagado Neón */
 .checkbox-pagado {
-  width: 18px;
-  height: 18px;
-  accent-color: #10b981;
-  cursor: pointer;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--neon-purple);
+    cursor: pointer;
 }
 
-.fila-pagada {
-  opacity: 0.6;
-  background-color: #f8fafc;
+.fila-pagada td {
+    opacity: 0.3;
+    text-decoration: line-through;
+}
+
+/* ========================================================== */
+/* CORRECCIÓN DE LETRA BLANCA EN TARJETAS DE FONDO CLARO      */
+/* ========================================================== */
+
+/* Forzar texto negro (#111827) en los contenedores de historial / tarjetas que tengan fondo claro */
+.bloque-semana div[style*="background"], 
+.item-historial div[style*="background"],
+.bloque-semana div[style*="background-color"],
+.item-historial div[style*="background-color"] {
+    color: #111827 !important;
+}
+
+/* Forzar texto negro en todos los párrafos y textos dentro de esas tarjetas con fondo claro */
+.bloque-semana div[style*="background"] p, 
+.bloque-semana div[style*="background"] span,
+.bloque-semana div[style*="background"] strong,
+.item-historial div[style*="background"] p, 
+.item-historial div[style*="background"] span,
+.item-historial div[style*="background"] strong {
+    color: #111827 !important;
 }

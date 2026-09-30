@@ -101,8 +101,8 @@
 
     <button id="btnGuardar" class="btn-principal">Guardar Registro del Día</button>
 
-    <!-- SECCIÓN AHORRO PROGRAMADO -->
-    <div class="card" style="margin-top: 20px;">
+    <!-- SECCIÓN AHORRO PROGRAMADO (Con la clase card-ancho-total aplicada) -->
+    <div class="card card-ancho-total" style="margin-top: 20px;">
       <h2>Ahorro Programado para Gastos Fijos</h2>
       
       <details>
@@ -114,12 +114,12 @@
           <div class="form-fijo">
             <div class="campo-fijo">
               <label for="nombreFijo">Gasto</label>
-              <input type="text" id="nombreFijo" placeholder="Ej: arriendo, servicios, etc.">
+              <input type="text" id="nombreFijo"  placeholder="Ej: arriendo, servicios, etc.">
             </div>
             
             <div class="campo-fijo">
-              <label for="valorFijo">Valor mes</label>
-              <input type="number" id="valorFijo" placeholder="Ej: 100000">
+                <label for="valorFijo">Valor mes</label>
+                <input type="text" id="valorFijo" placeholder="Ej: 100.000">
             </div>
             
             <div class="campo-fijo">
@@ -127,7 +127,7 @@
               <input type="number" id="diaFijo" oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" placeholder="Ej: 15">
             </div>
 
-            <button id="btnAgregarFijo" class="btn-secundario">Agregar</button>
+           <button class="btn-agregar-fijo" onclick="agregarGastoFijo()">➕ Agregar</button>
           </div>
 
           <table class="tabla-fijos">
@@ -157,7 +157,7 @@
         <span>Meta sugerida acumulada a hoy:</span>
         <strong id="totalAhorroSugerido">$0</strong>
       </div>
-      <!-- NUEVO CAMPO AGREGADO -->
+      
       <div class="resultado-item">
         <span>Libre:</span>
         <strong id="totalLibre">$0</strong>
@@ -165,13 +165,11 @@
     </div>
 
     <!-- HISTORIAL -->
-    <hr style="margin: 25px 0;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-      <h2 style="margin: 0;">Historial Registrado</h2>
-    </div>
+    <hr style="grid-column: 1 / -1; border: none; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 15px 0;">
+    <h2 class="titulo-historial">Historial Registrado</h2>
     <div id="historial"></div>
   </div>
-
+  
   <script src="script.js"></script>
 </body>
 </html>
