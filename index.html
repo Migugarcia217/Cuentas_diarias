@@ -1,182 +1,412 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Control de Gastos</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Financiero</title>
+    <style>
+        :root {
+            --neon-green: #22c55e;
+            --neon-cyan: #38bdf8;
+            --neon-pink: #f43f5e;
+            --neon-purple: #c084fc;
+            --bg-dark: #030712;
+            --card-bg: #0f172a;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+            font-size: 22px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Contenedor de Fecha */
+        .fecha-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 25px;
+            background: var(--card-bg);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .fecha-container input {
+            background: var(--bg-dark);
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        /* Grid principal de 3 columnas */
+        .grid-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-sizing: border-box;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 18px;
+            letter-spacing: 1px;
+        }
+
+        .card-1 .card-title { color: var(--neon-pink); }
+        .card-2 .card-title { color: var(--neon-cyan); }
+        .card-3 .card-title { color: #ffffff; }
+
+        .input-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+
+        .input-group label {
+            color: #cbd5e1;
+        }
+
+        .input-group input {
+            background: var(--bg-dark);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            padding: 8px 10px;
+            border-radius: 8px;
+            text-align: right;
+            width: 150px;
+            font-size: 14px;
+        }
+
+        .resultado-linea {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 18px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Sección de Ahorro Programado */
+        .ahorro-box {
+            background: var(--card-bg);
+            border: 1px solid rgba(192, 132, 252, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .ahorro-title {
+            color: var(--neon-purple);
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .ahorro-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #cbd5e1;
+        }
+
+        /* Cuadre del Día */
+        .cuadre-box {
+            background: var(--card-bg);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .cuadre-title {
+            color: var(--neon-green);
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .cuadre-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #cbd5e1;
+        }
+
+        .cuadre-diff {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* Botón Guardar */
+        .btn-guardar {
+            width: 100%;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 30px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-guardar:hover {
+            opacity: 0.9;
+        }
+
+        /* Historial */
+        .historial-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        th {
+            color: #94a3b8;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>CONTROL FINANCIERO</h1>
 
-    <div class="campo-fecha">
-      <label for="fecha">Fecha:</label>
-      <input type="date" id="fecha">
-    </div>
+    <div class="container">
+        <h1>CONTROL FINANCIERO</h1>
 
-    <!-- SECCIÓN 1: TRABAJO -->
-    <div class="card">
-      <h2>1. Trabajo</h2>
-      <div class="input-group">
-        <label for="trabajo">Trabajo (Bruto):</label>
-        <input type="text" id="trabajo" class="moneda-input" placeholder="0">
-      </div>
-      <div class="input-group">
-        <label for="gasolina">Gasolina:</label>
-        <input type="text" id="gasolina" class="moneda-input" placeholder="0">
-      </div>
-      <div class="input-group">
-        <label for="pass">Uber Pass :</label>
-        <input type="text" id="pass" class="moneda-input" placeholder="0">
-      </div>
-      <div class="input-group">
-        <label for="deudaUber">Deuda Uber :</label>
-        <input type="text" id="deudaUber" class="moneda-input" placeholder="0">
-      </div>
-      <div class="input-group">
-        <label for="ahorro">Ahorro Gastos Fijos:</label>
-        <input type="text" id="ahorro" class="moneda-input" placeholder="0">
-      </div>
-      <div class="resultado-item">
-        <span>Ganancia Neto:</span>
-        <strong id="gananciaNeto">$0</strong>
-      </div>
-    </div>
-
-    <!-- SECCIÓN 2: GASTOS -->
-    <div class="card">
-      <h2>2. Gastos del Día</h2>
-      <div class="input-group">
-        <label for="yo">Personal:</label>
-        <input type="text" id="yo" class="moneda-input" placeholder="0">
-      </div>
-      <div class="input-group">
-        <label for="carro">Carro / Mantenimiento:</label>
-        <input type="text" id="carro" class="moneda-input" placeholder="0">
-      </div>
-      <div class="input-group">
-        <label for="comidaCalle">Comida Calle:</label>
-        <input type="text" id="comidaCalle" class="moneda-input" placeholder="0">
-      </div>
-      <div class="input-group">
-        <label for="mercado">Mercado:</label>
-        <input type="text" id="mercado" class="moneda-input" placeholder="0">
-      </div>
-      <div class="input-group">
-        <label for="gastoFijo">Gastos Fijos:</label>
-        <input type="text" id="gastoFijo" class="moneda-input" placeholder="0">
-      </div>
-      <div class="resultado-item">
-        <span>Gasto Total:</span>
-        <strong id="gastoTotal">$0</strong>
-      </div>
-    </div>
-
-    <!-- SECCIÓN 3: EFECTIVO / CUENTAS -->
-    <div class="card">
-      <h2>3. Saldo Disponible</h2>
-      <div class="input-group">
-        <label for="efectivo">Efectivo:</label>
-        <input type="text" id="efectivo" class="moneda-input" placeholder="0">
-      </div>
-      <div class="input-group">
-        <label for="nequi">Nequi / Banco:</label>
-        <input type="text" id="nequi" class="moneda-input" placeholder="0">
-      </div>
-      <div class="input-group">
-        <label for="pendiente">Pendiente por cobrar:</label>
-        <input type="text" id="pendiente" class="moneda-input" placeholder="0">
-      </div>
-      <div class="resultado-item">
-        <span>Tengo Total:</span>
-        <strong id="tengoTotal">$0</strong>
-      </div>
-    </div>
-
-    <!-- RESUMEN DE CUADRE -->
-    <div class="card resumen-card">
-      <h2>Cuadre del Día</h2>
-      <p>Tengo de Ayer: <strong id="tengoAyer">$0</strong></p>
-      <p>Debería Tener Hoy: <strong id="deberiaTener">$0</strong></p>
-      <hr>
-      <h3>Diferencia: <span id="diferencia">$0</span></h3>
-    </div>
-
-    <button id="btnGuardar" class="btn-principal">Guardar Registro del Día</button>
-
-    <!-- SECCIÓN AHORRO PROGRAMADO -->
-    <div class="card card-ancho-total" style="margin-top: 20px;">
-      <h2>Ahorro Programado para Gastos Fijos</h2>
-      
-      <details>
-        <summary style="cursor: pointer; font-weight: 300; color: #09f89c; margin: 10px ; font-size: 20px;">
-          Ver detalle y agregar gastos fijos
-        </summary>
-        
-        <div style="margin-top: 10px;">
-          <div class="form-fijo">
-            <div class="campo-fijo">
-              <label for="nombreFijo">Gasto</label>
-              <input type="text" id="nombreFijo" placeholder="Ej: arriendo, servicios, etc.">
-            </div>
-            
-            <div class="campo-fijo">
-                <label for="valorFijo">Valor mes</label>
-                <input type="text" id="valorFijo" placeholder="Ej: 100.000">
-            </div>
-            
-            <div class="campo-fijo">
-              <label for="diaFijo">Día de pago </label>
-              <input type="number" id="diaFijo" oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" placeholder="Ej: 15">
-            </div>
-
-           <button class="btn-agregar-fijo" onclick="agregarGastoFijo()">➕ Agregar</button>
-          </div>
-
-          <table class="tabla-fijos">
-          <thead>
-              <tr>
-                <th>Concepto</th>
-                <th>Monto</th>
-                <th>Día Pago</th>
-                <th>Ahorro/Día</th>
-                <th>Acumulado Hoy</th>
-                <th>Pagado</th>
-                <th></th>
-              </tr>
-          </thead>
-          <tbody id="tablaGastosFijos"></tbody>
-          </table>
+        <!-- Selector de Fecha -->
+        <div class="fecha-container">
+            <label for="fecha">FECHA:</label>
+            <input type="date" id="fecha">
         </div>
-      </details>
 
-      <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 15px 0 10px 0;">
+        <!-- SECCIÓN INDEPENDIENTE DE INGRESOS (TRABAJO BRUTO) -->
+        <div style="background: rgba(20, 83, 45, 0.2); border: 1px solid rgba(34, 197, 94, 0.4); border-radius: 16px; padding: 20px; margin-bottom: 20px; box-sizing: border-box; width: 100%;">
+            <div style="font-size: 14px; font-weight: bold; color: #22c55e; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                💵 INGRESOS
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                <label for="trabajo" style="color: #ffffff; font-size: 13px; font-weight: 600;">Trabajo (Bruto):</label>
+                <input type="text" id="trabajo" placeholder="0" style="background: #030712; border: 1px solid rgba(34, 197, 94, 0.4); color: #ffffff; padding: 8px 12px; border-radius: 8px; text-align: right; width: 160px; font-size: 14px;">
+            </div>
+        </div>
 
-      <div class="resultado-item" style="margin-top:10px;">
-        <span>Ahorro diario total requerido:</span>
-        <strong id="totalAhorroDiarioSugerido">$0</strong>
-      </div>
-      <div class="resultado-item">
-        <span>Meta sugerida acumulada a hoy:</span>
-        <strong id="totalAhorroSugerido">$0</strong>
-      </div>
-      <div class="resultado-item2">
-        <span>Libre:</span>
-        <strong id="totalLibre">$0</strong>
-      </div>
-      <div class="resultado-item2">
-          <span>Total Saldo (Incluyendo pendiente):  </span>
-          <strong id="totalSaldoActualFijo">$0</strong>
-      </div>
+        <!-- Grid de 3 Columnas -->
+        <div class="grid-dashboard">
+            
+            <!-- Columna 1: Trabajo / Deducciones -->
+            <div class="card card-1">
+                <div class="card-title">1. TRABAJO</div>
+                
+                <div class="input-group">
+                    <label for="gasolina">Gasolina:</label>
+                    <input type="text" id="gasolina" placeholder="0">
+                </div>
+                <div class="input-group">
+                    <label for="pass">Uber Pass:</label>
+                    <input type="text" id="pass" placeholder="0">
+                </div>
+                <div class="input-group">
+                    <label for="deudaUber">Deuda Uber:</label>
+                    <input type="text" id="deudaUber" placeholder="0">
+                </div>
+                <div class="input-group">
+                    <label for="ahorro">Ahorro Gastos Fijos:</label>
+                    <input type="text" id="ahorro" placeholder="0">
+                </div>
+
+                <div class="resultado-linea">
+                    <span>Ganancia Neto:</span>
+                    <span id="gananciaNeto" style="color: var(--neon-green);">$0</span>
+                </div>
+            </div>
+
+            <!-- Columna 2: Gastos del Día -->
+            <div class="card card-2">
+                <div class="card-title">2. GASTOS DEL DÍA</div>
+                
+                <div class="input-group">
+                    <label for="yo">Personal:</label>
+                    <input type="text" id="yo" placeholder="0">
+                </div>
+                <div class="input-group">
+                    <label for="carro">Carro / Mantenimiento:</label>
+                    <input type="text" id="carro" placeholder="0">
+                </div>
+                <div class="input-group">
+                    <label for="comidaCalle">Comida Calle:</label>
+                    <input type="text" id="comidaCalle" placeholder="0">
+                </div>
+                <div class="input-group">
+                    <label for="gastoFijo">Gastos Fijos:</label>
+                    <input type="text" id="gastoFijo" placeholder="0">
+                </div>
+
+                <div class="resultado-linea">
+                    <span>Gasto Total:</span>
+                    <span id="gastoTotal" style="color: var(--neon-pink);">$0</span>
+                </div>
+            </div>
+
+            <!-- Columna 3: Saldo Disponible -->
+            <div class="card card-3">
+                <div class="card-title">3. SALDO DISPONIBLE</div>
+                
+                <div class="input-group">
+                    <label for="efectivo">Efectivo:</label>
+                    <input type="text" id="efectivo" placeholder="0">
+                </div>
+                <div class="input-group">
+                    <label for="nequi">Nequi / Banco:</label>
+                    <input type="text" id="nequi" placeholder="0">
+                </div>
+                <div class="input-group">
+                    <label for="pendiente">Pendiente por cobrar:</label>
+                    <input type="text" id="pendiente" placeholder="0">
+                </div>
+
+                <div class="resultado-linea" style="margin-top: 45px;">
+                    <span>Tengo Total:</span>
+                    <span id="tengoTotal" style="color: var(--neon-cyan);">$0</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Ahorro Programado para Gastos Fijos -->
+        <div class="ahorro-box">
+            <div class="ahorro-title">AHORRO PROGRAMADO PARA GASTOS FIJOS</div>
+            
+            <details style="margin-bottom: 15px;">
+                <summary style="cursor: pointer; color: var(--neon-green); font-size: 13px; font-weight: 600;">▶ Ver detalle y agregar gastos fijos</summary>
+                <div style="margin-top: 15px;">
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+                        <input type="text" id="nombreFijo" placeholder="Concepto (ej. Arriendo)" style="background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.2); color:white; padding:6px 10px; border-radius:6px; flex:2; font-size:13px;">
+                        <input type="text" id="valorFijo" placeholder="Valor Mes ($)" style="background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.2); color:white; padding:6px 10px; border-radius:6px; flex:1; font-size:13px;">
+                        <input type="number" id="diaFijo" placeholder="Día pago" min="1" max="31" style="background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.2); color:white; padding:6px 10px; border-radius:6px; width: 80px; font-size:13px;">
+                        <button onclick="agregarGastoFijo()" style="background: var(--neon-purple); border:none; color:black; font-weight:bold; padding:6px 12px; border-radius:6px; cursor:pointer;">Agregar</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Concepto</th>
+                                <th>Valor Mes</th>
+                                <th>Día Pago</th>
+                                <th>Ahorro Diario Req.</th>
+                                <th>Meta Acumulada</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaGastosFijos">
+                            <!-- Se llena dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </details>
+
+            <div style="border-top: 1px dashed rgba(255,255,255,0.2); margin: 15px 0;"></div>
+
+            <div class="ahorro-row">
+                <span>Ahorro diario total requerido:</span>
+                <strong id="totalAhorroDiarioSugerido" style="color: var(--neon-purple);">$0</strong>
+            </div>
+            <div class="ahorro-row">
+                <span>Meta sugerida acumulada a hoy:</span>
+                <strong id="totalAhorroSugerido" style="color: var(--neon-purple);">$0</strong>
+            </div>
+            <div class="ahorro-row" style="font-size: 14px; margin-top: 8px;">
+                <span style="color: var(--neon-green); font-weight: bold;">Libre:</span>
+                <strong id="totalLibre" style="color: var(--neon-green);">$0</strong>
+            </div>
+            <div class="ahorro-row" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; margin-top: 10px; font-size: 14px;">
+                <span style="color: var(--neon-green); font-weight: bold;">Total Saldo (Incluyendo pendiente):</span>
+                <strong id="totalSaldoActualFijo" style="color: var(--neon-green);">$0</strong>
+            </div>
+        </div>
+
+        <!-- Cuadre del Día -->
+        <div class="cuadre-box">
+            <div class="cuadre-title">CUADRE DEL DÍA</div>
+            <div class="cuadre-row">
+                <span>Tengo de Ayer:</span>
+                <span id="tengoAyer">$0</span>
+            </div>
+            <div class="cuadre-row">
+                <span>Debería Tener Hoy:</span>
+                <span id="deberiaTener">$0</span>
+            </div>
+            <div class="cuadre-diff">
+                <span>Diferencia:</span>
+                <span id="diferencia">$0</span>
+            </div>
+        </div>
+
+        <!-- Botón Guardar -->
+        <button id="btnGuardar" class="btn-guardar">GUARDAR REGISTRO DEL DÍA</button>
+
+        <!-- Historial Registrado -->
+        <div class="historial-container">
+            <div class="card-title" style="color: #facc15; margin-bottom: 15px;">HISTORIAL REGISTRADO</div>
+            <div id="historial"></div>
+        </div>
+
     </div>
 
-    <!-- HISTORIAL -->
-    <hr style="grid-column: 1 / -1; border: none; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 15px 0;">
-    <h2 class="titulo-historial">Historial Registrado</h2>
-    <div id="historial"></div>
-  </div>
-  
-  <script src="script.js"></script>
+    <!-- Archivo JavaScript -->
+    <script src="script.js"></script>
 </body>
 </html>
