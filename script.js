@@ -474,7 +474,7 @@ function eliminarDiaHistorial(fecha) {
 }
 
 // ==========================================
-// CARGAR HISTORIAL (SEMANAS Y MESES)
+// CARGAR HISTORIAL (SEMANAS Y MESES) CON BORDES NEÓN
 // ==========================================
 
 function cargarHistorial() {
@@ -541,7 +541,7 @@ function cargarHistorial() {
         const nombreMesTexto = `${nombresMeses[mesNum] || mesNum} ${anio}`;
 
         htmlResumenesMensuales += `
-            <div style="background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; margin-bottom: 15px; width: 100%; box-sizing: border-box; color: #ffffff;">
+            <div style="background: #030712; border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 12px; padding: 16px; margin-bottom: 15px; width: 100%; box-sizing: border-box; color: #ffffff; box-shadow: 0 0 10px rgba(56, 189, 248, 0.15);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                     <div style="font-size: 15px; font-weight: 700; color: #ffffff;">
                         📊 ${nombreMesTexto.toUpperCase()}
@@ -576,7 +576,7 @@ function cargarHistorial() {
                     </div>
                 </div>
 
-                <div style="background: rgba(3, 7, 18, 0.8); width: 100%; box-sizing: border-box; padding: 10px 14px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; border: 1px solid rgba(250, 204, 21, 0.3);">
+                <div style="background: rgba(3, 7, 18, 0.8); width: 100%; box-sizing: border-box; padding: 10px 14px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; border: 1px solid rgba(250, 204, 21, 0.4); box-shadow: 0 0 8px rgba(250, 204, 21, 0.15);">
                     <span><strong>Balance Final Mes:</strong></span>
                     <strong style="color:${colorDifMes}; font-size: 16px;">${fmt(diferenciaMes)}</strong>
                 </div>
@@ -587,7 +587,7 @@ function cargarHistorial() {
     const desplegableMensualDiv = document.createElement('div');
     desplegableMensualDiv.style.marginBottom = '20px';
     desplegableMensualDiv.innerHTML = `
-        <div style="background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px; width: 100%; box-sizing: border-box;">
+        <div style="background: #030712; border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 16px; padding: 16px; width: 100%; box-sizing: border-box; box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);">
             <details>
                 <summary style="cursor: pointer; font-size: 15px; color: #ffffff; font-weight: 700; list-style: none; display: flex; justify-content: space-between; align-items: center;">
                     <span>📂 Ver Resúmenes Mensuales</span>
@@ -660,7 +660,7 @@ function cargarHistorial() {
                         <div>📅 <strong>${r.fecha}</strong></div>
                         <div style="display: flex; gap: 8px;">
                             <button onclick="editarDiaHistorial('${r.fecha}')" title="Editar" style="background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; color: #38bdf8; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 3px;">✏️ Editar</button>
-                            <button onclick="eliminarDiaHistorial('${r.fecha}')" title="Eliminar" style="background: rgba(244, 63, 94, 0.2); border: 1px solid #f43f5e; color: #f43f5e; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 3px;">🗑️ Eliminar</button>
+                            <button onclick="eliminarDiaHistorial('${r.fecha}')" title="Eliminar" style="background: rgba(244, 63, 94, 0.2); border: 1px solid #f43f5e; color: #f43f5e; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 3px;">🗑 Eliminar</button>
                         </div>
                     </div>
                     <div style="font-size: 12px; margin-bottom: 6px;">
@@ -681,64 +681,69 @@ function cargarHistorial() {
         const semanaDiv = document.createElement('div');
         semanaDiv.style.marginBottom = '20px';
 
+        // TARJETA SEMANAL CON BORDE NEÓN CIAN Y SOMBRA BRILLANTE
         semanaDiv.innerHTML = `
-            <div style="font-weight:700; margin-bottom:8px; color:#38bdf8; font-size:14px;">${tituloSemana}</div>
+            <div style="background: #030712; border: 1px solid rgba(56, 189, 248, 0.5); border-radius: 16px; padding: 18px; margin-bottom: 20px; box-sizing: border-box; width: 100%; box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);">
+                <div style="font-weight:700; margin-bottom:14px; color:#38bdf8; font-size:15px; display: flex; align-items: center; gap: 6px; text-shadow: 0 0 8px rgba(56, 189, 248, 0.5);">
+                    ${tituloSemana}
+                </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
-                <div style="background: rgba(20, 83, 45, 0.3); border: 1px solid rgba(34, 197, 94, 0.3); padding: 12px; border-radius: 12px; font-size: 12px; color: #ffffff;">
-                    <strong style="color: #22c55e; display: block; margin-bottom: 6px; font-size: 13px;">💼 TRABAJO</strong>
-                    <div>Bruto: <strong>${fmt(trabajoSemanal)}</strong></div>
-                    <div>Gasolina: -${fmt(gasolinaSemanal)}</div>
-                    <div>Pass: -${fmt(passSemanal)}</div>
-                    <div>Deuda Uber: -${fmt(deudaUberSemanal)}</div>
-                    <div>Ahorro Fijos: -${fmt(ahorroSemanal)}</div>
-                    <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e; font-size: 13px;">
-                        <strong>Neto: ${fmt(gananciaSemanal)}</strong>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+                    <div style="background: rgba(20, 83, 45, 0.3); border: 1px solid rgba(34, 197, 94, 0.4); padding: 12px; border-radius: 12px; font-size: 12px; color: #ffffff; box-shadow: 0 0 8px rgba(34, 197, 94, 0.15);">
+                        <strong style="color: #22c55e; display: block; margin-bottom: 6px; font-size: 13px;">💼 TRABAJO</strong>
+                        <div>Bruto: <strong>${fmt(trabajoSemanal)}</strong></div>
+                        <div>Gasolina: -${fmt(gasolinaSemanal)}</div>
+                        <div>Pass: -${fmt(passSemanal)}</div>
+                        <div>Deuda Uber: -${fmt(deudaUberSemanal)}</div>
+                        <div>Ahorro Fijos: -${fmt(ahorroSemanal)}</div>
+                        <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e; font-size: 13px;">
+                            <strong>Neto: ${fmt(gananciaSemanal)}</strong>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(159, 18, 57, 0.25); border: 1px solid rgba(244, 63, 94, 0.4); padding: 12px; border-radius: 12px; font-size: 12px; color: #ffffff; box-shadow: 0 0 8px rgba(244, 63, 94, 0.15);">
+                        <strong style="color: #f43f5e; display: block; margin-bottom: 6px; font-size: 13px;">💸 GASTOS</strong>
+                        <div>Personal: <strong>${fmt(yoSemanal)}</strong></div>
+                        <div>Carro: ${fmt(carroSemanal)}</div>
+                        <div>Gastos Fijos: ${fmt(gastosFijosSemanal)}</div>
+                        <div>Comida: ${fmt(comidaCalleSemanal)}</div>
+                        <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(244, 63, 94, 0.3); color: #f43f5e; font-size: 13px;">
+                            <strong>Total: ${fmt(gastosSemanal)}</strong>
+                        </div>
                     </div>
                 </div>
 
-                <div style="background: rgba(159, 18, 57, 0.25); border: 1px solid rgba(244, 63, 94, 0.3); padding: 12px; border-radius: 12px; font-size: 12px; color: #ffffff;">
-                    <strong style="color: #f43f5e; display: block; margin-bottom: 6px; font-size: 13px;">💸 GASTOS</strong>
-                    <div>Personal: <strong>${fmt(yoSemanal)}</strong></div>
-                    <div>Carro: ${fmt(carroSemanal)}</div>
-                    <div>Gastos Fijos: ${fmt(gastosFijosSemanal)}</div>
-                    <div>Comida: ${fmt(comidaCalleSemanal)}</div>
-                    <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(244, 63, 94, 0.3); color: #f43f5e; font-size: 13px;">
-                        <strong>Total: ${fmt(gastosSemanal)}</strong>
+                <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.4); padding: 12px 14px; border-radius: 10px; font-size: 12px; margin-bottom: 12px; width: 100%; box-sizing: border-box; color: #ffffff; box-shadow: 0 0 8px rgba(56, 189, 248, 0.15);">
+                    <strong style="color: #38bdf8; display: block; margin-bottom: 8px; font-size: 13px;">💰 SALDO Y DISPONIBILIDAD SEMANAL</strong>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <span>Efectivo total:</span> <strong>${fmt(efectivoSemanal)}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <span>Nequi total:</span> <strong>${fmt(nequiSemanal)}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: #facc15;">
+                        <span>⏳ Pendiente por cobrar:</span> <strong>${fmt(pendienteSemanal)}</strong>
+                    </div>
+                    <div style="border-top: 1px solid rgba(56, 189, 248, 0.2); padding-top: 8px; display: flex; justify-content: space-between; font-size: 13px;">
+                        <span><strong>Total Saldo (Incluyendo pendiente):</strong></span>
+                        <strong>${fmt(tengoTotalSemanal)}</strong>
                     </div>
                 </div>
-            </div>
 
-            <div style="background: rgba(3, 7, 18, 0.6); border: 1px solid rgba(56, 189, 248, 0.3); padding: 10px 12px; border-radius: 10px; font-size: 12px; margin-bottom: 12px; width: 100%; box-sizing: border-box; color: #ffffff;">
-                <strong style="color: #38bdf8; display: block; margin-bottom: 6px; font-size: 13px;">💰 SALDO Y DISPONIBILIDAD SEMANAL</strong>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
-                    <span>Efectivo total:</span> <strong>${fmt(efectivoSemanal)}</strong>
+                <div style="background: rgba(15, 23, 42, 0.9); width: 100%; box-sizing: border-box; padding: 12px 14px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 12px; border: 1px solid rgba(34, 197, 94, 0.5); box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);">
+                    <span><strong>Cuadre Final Semana:</strong></span>
+                    <strong style="color:${colorDifSemanal}; font-size: 16px;">${fmt(diferenciaSemanal)}</strong>
                 </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
-                    <span>Nequi total:</span> <strong>${fmt(nequiSemanal)}</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 6px; color: #facc15;">
-                    <span>⏳ Pendiente por cobrar:</span> <strong>${fmt(pendienteSemanal)}</strong>
-                </div>
-                <div style="border-top: 1px solid rgba(56, 189, 248, 0.2); padding-top: 6px; display: flex; justify-content: space-between; font-size: 13px;">
-                    <span><strong>Total Saldo (Incluyendo pendiente):</strong></span>
-                    <strong>${fmt(tengoTotalSemanal)}</strong>
-                </div>
-            </div>
 
-            <div style="background: rgba(3, 7, 18, 0.8); width: 100%; box-sizing: border-box; padding: 10px 14px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 12px; border: 1px solid rgba(236, 10, 10, 0.3);">
-                <span><strong>Cuadre Final Semana:</strong></span>
-                <strong style="color:${colorDifSemanal}; font-size: 16px;">${fmt(diferenciaSemanal)}</strong>
+                <details style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 10px;">
+                    <summary style="cursor: pointer; font-size: 13px; color: #a855f7; font-weight: 700; padding: 4px 0;">
+                        <span>Ver detalle por días (${dias.length}) ▼</span>
+                    </summary>
+                    <div style="margin-top: 12px; color: #ffffff;">
+                        ${htmlDias}
+                    </div>
+                </details>
             </div>
-
-            <details>
-                <summary style="cursor: pointer; font-size: 13px; color: #a855f7; font-weight: 700; padding: 4px 0;">
-                    <span>Ver detalle por días (${dias.length})</span>
-                </summary>
-                <div style="margin-top: 10px; color: #ffffff;">
-                    ${htmlDias}
-                </div>
-            </details>
         `;
 
         contenedor.appendChild(semanaDiv);
