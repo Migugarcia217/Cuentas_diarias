@@ -48,7 +48,7 @@
     <div class="card">
       <h2>2. Gastos del Día</h2>
       <div class="input-group">
-        <label for="yo">Yo (Personal):</label>
+        <label for="yo">Personal:</label>
         <input type="text" id="yo" class="moneda-input" placeholder="0">
       </div>
       <div class="input-group">
@@ -60,7 +60,11 @@
         <input type="text" id="comidaCalle" class="moneda-input" placeholder="0">
       </div>
       <div class="input-group">
-        <label for="gastoFijo">Gasto Fijo:</label>
+        <label for="mercado">Mercado:</label>
+        <input type="text" id="mercado" class="moneda-input" placeholder="0">
+      </div>
+      <div class="input-group">
+        <label for="gastoFijo">Gastos Fijos:</label>
         <input type="text" id="gastoFijo" class="moneda-input" placeholder="0">
       </div>
       <div class="resultado-item">
@@ -101,7 +105,7 @@
 
     <button id="btnGuardar" class="btn-principal">Guardar Registro del Día</button>
 
-    <!-- SECCIÓN AHORRO PROGRAMADO (Con la clase card-ancho-total aplicada) -->
+    <!-- SECCIÓN AHORRO PROGRAMADO -->
     <div class="card card-ancho-total" style="margin-top: 20px;">
       <h2>Ahorro Programado para Gastos Fijos</h2>
       
@@ -114,7 +118,7 @@
           <div class="form-fijo">
             <div class="campo-fijo">
               <label for="nombreFijo">Gasto</label>
-              <input type="text" id="nombreFijo"  placeholder="Ej: arriendo, servicios, etc.">
+              <input type="text" id="nombreFijo" placeholder="Ej: arriendo, servicios, etc.">
             </div>
             
             <div class="campo-fijo">
@@ -165,8 +169,6 @@
           <span>Total Saldo (Incluyendo pendiente):  </span>
           <strong id="totalSaldoActualFijo">$0</strong>
       </div>
-      
-      
     </div>
 
     <!-- HISTORIAL -->

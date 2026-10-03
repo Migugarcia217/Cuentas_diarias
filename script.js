@@ -77,9 +77,10 @@ function calcularTotales() {
     const yo = getN('yo');
     const carro = getN('carro');
     const comidaCalle = getN('comidaCalle');
+    const mercado = getN('mercado');
     const gastosFijos = getN('gastoFijo');
 
-    const gastoTotal = yo + carro + comidaCalle + gastosFijos;
+    const gastoTotal = yo + carro + comidaCalle + mercado + gastosFijos;
 
     const efectivo = getN('efectivo');
     const nequi = getN('nequi');
@@ -105,7 +106,7 @@ function calcularTotales() {
     }
 
     const inputsVacios = trabajo === 0 && gasolina === 0 && pass === 0 && ahorro === 0 && deudaUber === 0 &&
-                         yo === 0 && carro === 0 && gastosFijos === 0 && comidaCalle === 0 &&
+                         yo === 0 && carro === 0 && gastosFijos === 0 && comidaCalle === 0 && mercado === 0 &&
                          efectivo === 0 && nequi === 0 && pendiente === 0;
 
     const deberiaTener = inputsVacios ? 0 : (tengoAyer + gananciaNeto - gastoTotal);
@@ -283,6 +284,75 @@ function cargarGastosFijos() {
 }
 
 // ==========================================
+// EXPORTAR MES A EXCEL (CSV)
+// ==========================================
+
+function exportarMesExcel(mesKey) {
+    const registros = JSON.parse(localStorage.getItem('registrosGastos')) || [];
+    
+    // Filtrado robusto basado en descomponer la fecha YYYY-MM-DD
+    const diasMes = registros.filter(r => {
+        if (!r.fecha) return false;
+        const partes = r.fecha.split('-');
+        if (partes.length < 2) return false;
+        const rMesKey = `${partes[0]}-${partes[1]}`;
+        return rMesKey === mesKey;
+    });
+
+    if (diasMes.length === 0) {
+        alert('No hay registros para este mes.');
+        return;
+    }
+
+    diasMes.sort((a, b) => a.fecha.localeCompare(b.fecha));
+
+    let csvContent = "\uFEFF"; // BOM para caracteres especiales / tildes en Excel
+    csvContent += `RESUMEN MENSUAL - ${mesKey}\n\n`;
+    csvContent += "Fecha;Trabajo Bruto;Gasolina;Pass;Deuda Uber;Ahorro Fijos;Ganancia Neto;Personal;Carro;Gastos Fijos;Comida Calle;Mercado;Gasto Total;Efectivo;Nequi;Pendiente;Total Saldo;Diferencia Cuadre\n";
+
+    let tBruto = 0, tGasolina = 0, tPass = 0, tDeuda = 0, tAhorro = 0, tNeto = 0;
+    let tPersonal = 0, tCarro = 0, tFijos = 0, tComida = 0, tMercado = 0, tGastoTotal = 0;
+
+    diasMes.forEach(r => {
+        const bruto = Number(r.trabajo) || 0;
+        const gas = Number(r.gasolina) || 0;
+        const pass = Number(r.pass) || 0;
+        const deuda = Number(r.deudaUber) || 0;
+        const ahorro = Number(r.ahorro) || 0;
+        const neto = Number(r.gananciaNeto) || 0;
+
+        const personal = Number(r.yo) || 0;
+        const carro = Number(r.carro) || 0;
+        const fijos = Number(r.gastosFijos) || 0;
+        const comida = Number(r.comidaCalle) || 0;
+        const mercado = Number(r.mercado) || 0;
+        const gTotal = Number(r.gastoTotal) || 0;
+
+        const efectivo = Number(r.efectivo) || 0;
+        const nequi = Number(r.nequi) || 0;
+        const pendiente = Number(r.pendiente) || 0;
+        const totalTengo = Number(r.tengoTotal) || 0;
+        const diferencia = Number(r.diferencia) || 0;
+
+        tBruto += bruto; tGasolina += gas; tPass += pass; tDeuda += deuda; tAhorro += ahorro; tNeto += neto;
+        tPersonal += personal; tCarro += carro; tFijos += fijos; tComida += comida; tMercado += mercado; tGastoTotal += gTotal;
+
+        csvContent += `${r.fecha};${bruto};${gas};${pass};${deuda};${ahorro};${neto};${personal};${carro};${fijos};${comida};${mercado};${gTotal};${efectivo};${nequi};${pendiente};${totalTengo};${diferencia}\n`;
+    });
+
+    csvContent += `\nTOTALES DEL MES;;;;;;${tNeto};${tPersonal};${tCarro};${tFijos};${tComida};${tMercado};${tGastoTotal};;;;;;\n`;
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `Resumen_Mensual_${mesKey}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// ==========================================
 // GUARDAR / EDITAR / ELIMINAR DÍA
 // ==========================================
 
@@ -305,8 +375,9 @@ function guardarDia() {
     const yo = getN('yo');
     const carro = getN('carro');
     const comidaCalle = getN('comidaCalle');
+    const mercado = getN('mercado');
     const gastosFijos = getN('gastoFijo');
-    const gastoTotal = yo + carro + comidaCalle + gastosFijos;
+    const gastoTotal = yo + carro + comidaCalle + mercado + gastosFijos;
 
     const efectivo = getN('efectivo');
     const nequi = getN('nequi');
@@ -333,6 +404,7 @@ function guardarDia() {
         yo,
         carro,
         comidaCalle,
+        mercado,
         gastosFijos,
         gastoTotal,
         efectivo,
@@ -356,7 +428,7 @@ function guardarDia() {
 
     const idsInputsMonetarios = [
         'trabajo', 'gasolina', 'pass', 'deudaUber', 'ahorro',
-        'yo', 'carro', 'comidaCalle', 'gastoFijo', 'efectivo', 'nequi', 'pendiente'
+        'yo', 'carro', 'comidaCalle', 'mercado', 'gastoFijo', 'efectivo', 'nequi', 'pendiente'
     ];
 
     idsInputsMonetarios.forEach(id => {
@@ -392,6 +464,7 @@ function editarDiaHistorial(fecha) {
     setVal('yo', registro.yo);
     setVal('carro', registro.carro);
     setVal('comidaCalle', registro.comidaCalle);
+    setVal('mercado', registro.mercado);
     setVal('gastoFijo', registro.gastosFijos);
 
     setVal('efectivo', registro.efectivo);
@@ -459,7 +532,7 @@ function cargarHistorial() {
         diasMes.sort((a, b) => a.fecha.localeCompare(b.fecha));
 
         let brutoMes = 0, gasolinaMes = 0, passMes = 0, ahorroMes = 0, deudaUberMes = 0, gananciaMes = 0;
-        let personalMes = 0, carroMes = 0, gastosFijosMes = 0, comidaMes = 0, gastosTotalesMes = 0;
+        let personalMes = 0, carroMes = 0, gastosFijosMes = 0, comidaMes = 0, mercadoMes = 0, gastosTotalesMes = 0;
 
         diasMes.forEach(d => {
             brutoMes += Number(d.trabajo) || 0;
@@ -473,6 +546,7 @@ function cargarHistorial() {
             carroMes += Number(d.carro) || 0;
             gastosFijosMes += Number(d.gastosFijos) || 0;
             comidaMes += Number(d.comidaCalle) || 0;
+            mercadoMes += Number(d.mercado) || 0;
             gastosTotalesMes += Number(d.gastoTotal) || 0;
         });
 
@@ -482,8 +556,13 @@ function cargarHistorial() {
 
         htmlResumenesMensuales += `
             <div style="background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; margin-bottom: 15px; width: 100%; box-sizing: border-box; color: #ffffff;">
-                <div style="font-size: 15px; font-weight: 700; color: #ffffff; margin-bottom: 12px; text-align: center;">
-                    📊 ${nombreMesTexto.toUpperCase()}
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div style="font-size: 15px; font-weight: 700; color: #ffffff;">
+                        📊 ${nombreMesTexto.toUpperCase()}
+                    </div>
+                    <button onclick="exportarMesExcel('${mesKey}')" style="background: rgba(34, 197, 94, 0.2); border: 1px solid #22c55e; color: #22c55e; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 4px; font-weight: 600;" title="Descargar Excel de este mes">
+                        📥 Descargar Excel
+                    </button>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
@@ -505,6 +584,7 @@ function cargarHistorial() {
                         <div>Carro: ${fmt(carroMes)}</div>
                         <div>Gastos Fijos: ${fmt(gastosFijosMes)}</div>
                         <div>Comida: ${fmt(comidaMes)}</div>
+                        <div>Mercado: ${fmt(mercadoMes)}</div>
                         <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(244, 63, 94, 0.3); color: #f43f5e; font-size: 13px;">
                             <strong>Total: ${fmt(gastosTotalesMes)}</strong>
                         </div>
@@ -553,7 +633,7 @@ function cargarHistorial() {
         dias.sort((a, b) => a.fecha.localeCompare(b.fecha));
 
         let trabajoSemanal = 0, gasolinaSemanal = 0, passSemanal = 0, ahorroSemanal = 0, deudaUberSemanal = 0, gananciaSemanal = 0;
-        let yoSemanal = 0, carroSemanal = 0, gastosFijosSemanal = 0, comidaCalleSemanal = 0, gastosSemanal = 0;
+        let yoSemanal = 0, carroSemanal = 0, gastosFijosSemanal = 0, comidaCalleSemanal = 0, mercadoSemanal = 0, gastosSemanal = 0;
 
         dias.forEach(d => {
             trabajoSemanal += Number(d.trabajo) || 0;
@@ -567,6 +647,7 @@ function cargarHistorial() {
             carroSemanal += Number(d.carro) || 0;
             gastosFijosSemanal += Number(d.gastosFijos) || 0;
             comidaCalleSemanal += Number(d.comidaCalle) || 0;
+            mercadoSemanal += Number(d.mercado) || 0;
             gastosSemanal += Number(d.gastoTotal) || 0;
         });
 
@@ -593,9 +674,9 @@ function cargarHistorial() {
                 <div style="border-left: 3px solid #38bdf8; padding: 12px; margin-bottom: 10px; border-radius: 10px; background: rgba(3, 7, 18, 0.4); width: 100%; box-sizing: border-box; color: #ffffff;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                         <div>📅 <strong>${r.fecha}</strong></div>
-                        <div>
-                            <button onclick="editarDiaHistorial('${r.fecha}')" title="Editar" style="background:none; border:none; cursor:pointer;">✏</button>
-                            <button onclick="eliminarDiaHistorial('${r.fecha}')" title="Eliminar" style="background:none; border:none; cursor:pointer;">🗑</button>
+                        <div style="display: flex; gap: 8px;">
+                            <button onclick="editarDiaHistorial('${r.fecha}')" title="Editar" style="background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; color: #38bdf8; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 3px;">✏️ Editar</button>
+                            <button onclick="eliminarDiaHistorial('${r.fecha}')" title="Eliminar" style="background: rgba(244, 63, 94, 0.2); border: 1px solid #f43f5e; color: #f43f5e; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 3px;">🗑️ Eliminar</button>
                         </div>
                     </div>
                     <div style="font-size: 12px; margin-bottom: 6px;">
@@ -638,6 +719,7 @@ function cargarHistorial() {
                     <div>Carro: ${fmt(carroSemanal)}</div>
                     <div>Gastos Fijos: ${fmt(gastosFijosSemanal)}</div>
                     <div>Comida: ${fmt(comidaCalleSemanal)}</div>
+                    <div>Mercado: ${fmt(mercadoSemanal)}</div>
                     <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(244, 63, 94, 0.3); color: #f43f5e; font-size: 13px;">
                         <strong>Total: ${fmt(gastosSemanal)}</strong>
                     </div>
@@ -655,25 +737,28 @@ function cargarHistorial() {
                 <div style="display: flex; justify-content: space-between; margin-bottom: 6px; color: #facc15;">
                     <span>⏳ Pendiente por cobrar:</span> <strong>${fmt(pendienteSemanal)}</strong>
                 </div>
-                <div style="border-top: 1px solid rgba(56, 189, 248, 0.2); padding-top: 6px; display: flex; justify-content: space-between; font-size: 13px;">
-                    <span><strong>Total Saldo (Incluyendo pendiente):</strong></span>
-                    <strong>${fmt(tengoTotalSemanal)}</strong>
+                <div style="border-top: 1px solid rgba(56, 189, 248, 0.2); padding-top: 6px; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                    <span>Total Disponible:</span>
+                    <strong style="color: #38bdf8;">${fmt(tengoTotalSemanal)}</strong>
                 </div>
             </div>
 
-            <div style="background: rgba(3, 7, 18, 0.8); width: 100%; box-sizing: border-box; padding: 10px 14px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 12px; border: 1px solid rgba(236, 10, 10, 0.3);">
-                <span><strong>Cuadre Final Semana:</strong></span>
-                <strong style="color:${colorDifSemanal}; font-size: 16px;">${fmt(diferenciaSemanal)}</strong>
+            <div style="background: rgba(3, 7, 18, 0.8); border: 1px solid rgba(250, 204, 21, 0.3); padding: 10px 12px; border-radius: 10px; font-size: 13px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; width: 100%; color: #ffffff;">
+                <span><strong>Balance Semanal:</strong></span>
+                <strong style="color:${colorDifSemanal}; font-size:15px;">${fmt(diferenciaSemanal)}</strong>
             </div>
 
-            <details>
-                <summary style="cursor: pointer; font-size: 13px; color: #a855f7; font-weight: 700; padding: 4px 0;">
-                    <span>Ver detalle por días (${dias.length})</span>
-                </summary>
-                <div style="margin-top: 10px; color: #ffffff;">
-                    ${htmlDias}
-                </div>
-            </details>
+            <div style="margin-bottom: 25px;">
+                <details style="background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px;">
+                    <summary style="cursor: pointer; font-size: 13px; font-weight: 700; color: #94a3b8; list-style: none; display: flex; justify-content: space-between; align-items: center;">
+                        <span>📅 Días de esta semana (${dias.length})</span>
+                        <span style="font-size: 12px;">(Ver / Ocultar) ▼</span>
+                    </summary>
+                    <div style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px;">
+                        ${htmlDias}
+                    </div>
+                </details>
+            </div>
         `;
 
         contenedor.appendChild(semanaDiv);
@@ -681,29 +766,21 @@ function cargarHistorial() {
 }
 
 // ==========================================
-// EVENTOS Y LISTENERS
+// INICIALIZACIÓN Y EVENTOS AUTOMÁTICOS
 // ==========================================
 
-window.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
     const fechaInput = document.getElementById('fecha');
-    if (fechaInput && !fechaInput.value) {
+    if (fechaInput) {
         fechaInput.value = obtenerFechaLocal();
+        fechaInput.addEventListener('change', () => {
+            calcularTotales();
+        });
     }
 
-    const idsInputsMonetarios = [
-        'valorFijo', 'trabajo', 'gasolina', 'pass', 'deudaUber', 'ahorro',
-        'yo', 'carro', 'comidaCalle', 'gastoFijo', 'efectivo', 'nequi', 'pendiente'
-    ];
-
-    idsInputsMonetarios.forEach(id => {
-        const inputEl = document.getElementById(id);
-        if (inputEl) {
-            aplicarFormatoMiles(inputEl);
-        }
-    });
-
-    const inputs = document.querySelectorAll('input');
-    inputs.forEach(input => {
+    const inputsMoneda = document.querySelectorAll('.moneda-input');
+    inputsMoneda.forEach(input => {
+        aplicarFormatoMiles(input);
         input.addEventListener('input', () => {
             calcularTotales();
         });
@@ -715,6 +792,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     calcularTotales();
-    cargarHistorial();
     cargarGastosFijos();
+    cargarHistorial();
 });
