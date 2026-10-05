@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Control Financiero - HoloGlass</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Audiowide&family=Outfit:wght@300;400;600;700&display=swap');
 
         :root {
             --holo-cyan: #00f0ff;
@@ -31,16 +31,17 @@
             background-attachment: fixed;
         }
 
+        /* TIPOGRAFÍA AUDIOWIDE Y EFECTO NEÓN EN EL TÍTULO PRINCIPAL */
         h1 {
             text-align: center;
-            letter-spacing: 4px;
+            letter-spacing: 3px;
             margin-bottom: 30px;
-            font-size: 28px;
-            font-weight: 700;
+            font-size: 32px;
+            font-family: 'Audiowide', cursive, sans-serif;
             background: linear-gradient(90deg, var(--holo-cyan), var(--holo-pink), var(--holo-green));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
+            text-shadow: 0 0 25px rgba(0, 240, 255, 0.4);
         }
 
         .container {
@@ -48,40 +49,44 @@
             margin: 0 auto;
         }
 
-        /* Contenedor de Fecha Holográfico */
+        /* Contenedor de Fecha */
         .fecha-container {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 15px;
             margin-bottom: 30px;
-            background: var(--glass-bg);
+            background: rgba(13, 17, 23, 0.85);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            padding: 16px;
+            padding: 18px;
             border-radius: 20px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border: 1px solid var(--holo-cyan);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 240, 255, 0.25);
         }
 
         .fecha-container label {
             color: var(--holo-cyan);
-            font-weight: 600;
+            font-family: 'Audiowide', cursive, sans-serif;
+            font-size: 14px;
             letter-spacing: 1px;
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
         }
 
         .fecha-container input {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--holo-cyan);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-size: 15px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 2px solid var(--holo-cyan);
+            color: #ffffff;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
             font-family: 'Outfit', sans-serif;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+            color-scheme: dark;
         }
 
-        /* Grid principal de 3 columnas con efecto cristal */
+        /* Grid principal de 3 columnas */
         .grid-dashboard {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -121,9 +126,10 @@
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 136, 0.2);
         }
 
+        /* TÍTULOS DE LAS TARJETAS CON TIPOGRAFÍA AUDIOWIDE */
         .card-title {
             font-size: 15px;
-            font-weight: 700;
+            font-family: 'Audiowide', cursive, sans-serif;
             margin-bottom: 20px;
             letter-spacing: 1.5px;
         }
@@ -176,7 +182,7 @@
             font-weight: 600;
         }
 
-        /* Sección de Ahorro Programado (Holográfica) */
+        /* Sección de Ahorro Programado */
         .ahorro-box {
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
@@ -192,7 +198,7 @@
         .ahorro-title {
             color: var(--holo-purple);
             font-size: 15px;
-            font-weight: 700;
+            font-family: 'Audiowide', cursive, sans-serif;
             margin-bottom: 18px;
             letter-spacing: 1.5px;
             text-shadow: 0 0 10px rgba(157, 0, 255, 0.5);
@@ -222,7 +228,7 @@
         .cuadre-title {
             color: var(--holo-yellow);
             font-size: 15px;
-            font-weight: 700;
+            font-family: 'Audiowide', cursive, sans-serif;
             margin-bottom: 18px;
             letter-spacing: 1.5px;
             text-shadow: 0 0 10px rgba(255, 234, 0, 0.5);
@@ -256,7 +262,7 @@
             border-radius: 16px;
             font-size: 16px;
             font-weight: 700;
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Audiowide', cursive, sans-serif;
             cursor: pointer;
             margin-bottom: 30px;
             box-shadow: 0 0 25px rgba(0, 255, 136, 0.4);
@@ -303,7 +309,7 @@
 <body>
 
     <div class="container">
-        <h1>✦ CONTROL FINANCIERO ✦</h1>
+        <h1>CONTROL FINANCIERO</h1>
 
         <!-- Selector de Fecha -->
         <div class="fecha-container">
@@ -313,7 +319,7 @@
 
         <!-- SECCIÓN INDEPENDIENTE DE INGRESOS (TRABAJO BRUTO) -->
         <div style="background: var(--glass-bg); backdrop-filter: blur(20px); border-radius: 24px; padding: 24px; margin-bottom: 25px; border: 1px solid var(--glass-border); border-top: 2px solid var(--holo-green); box-shadow: 0 15px 35px rgba(0,0,0,0.5), 0 0 25px rgba(0,255,136,0.2);">
-            <div style="font-size: 15px; font-weight: 700; color: var(--holo-green); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(0,255,136,0.5);">
+            <div style="font-size: 15px; font-family: 'Audiowide', cursive; color: var(--holo-green); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(0,255,136,0.5);">
                 💵 INGRESOS
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
@@ -367,6 +373,10 @@
                 <div class="input-group">
                     <label for="comidaCalle">Comida Calle:</label>
                     <input type="text" id="comidaCalle" placeholder="0">
+                </div>
+                <div class="input-group">
+                    <label for="mercado">Mercado:</label>
+                    <input type="text" id="mercado" placeholder="0">
                 </div>
                 <div class="input-group">
                     <label for="gastoFijo">Gastos Fijos:</label>
@@ -435,7 +445,7 @@
                         <input type="text" id="nombreFijo" placeholder="Concepto (ej. Arriendo)" style="background: rgba(0,0,0,0.5); border: 1px solid var(--holo-purple); color:white; padding:6px 10px; border-radius:8px; flex:2; font-size:14px; font-family:'Outfit',sans-serif;">
                         <input type="text" id="valorFijo" placeholder="Valor Mes ($)" style="background: rgba(0,0,0,0.5); border: 1px solid var(--holo-purple); color:white; padding:6px 10px; border-radius:8px; flex:1; font-size:14px; font-family:'Outfit',sans-serif;">
                         <input type="number" id="diaFijo" placeholder="Día" min="1" max="31" style="background: rgba(0,0,0,0.5); border: 1px solid var(--holo-purple); color:white; padding:6px 10px; border-radius:8px; width: 70px; font-size:14px; font-family:'Outfit',sans-serif;">
-                        <button onclick="agregarGastoFijo()" style="background: var(--holo-purple); border:none; color:white; font-weight:bold; padding:6px 14px; border-radius:8px; cursor:pointer; box-shadow: 0 0 10px rgba(157, 0, 255, 0.5); font-family:'Outfit',sans-serif;">Agregar</button>
+                        <button onclick="agregarGastoFijo()" style="background: var(--holo-purple); border:none; color:white; font-weight:bold; padding:6px 14px; border-radius:8px; cursor:pointer; box-shadow: 0 0 10px rgba(157, 0, 255, 0.5); font-family:'Audiowide',cursive;">Agregar</button>
                     </div>
                     <table>
                         <thead>

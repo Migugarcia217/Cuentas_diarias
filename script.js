@@ -77,9 +77,10 @@ function calcularTotales() {
     const yo = getN('yo');
     const carro = getN('carro');
     const comidaCalle = getN('comidaCalle');
+    const mercado = getN('mercado');
     const gastosFijos = getN('gastoFijo');
 
-    const gastoTotal = yo + carro + comidaCalle + gastosFijos;
+    const gastoTotal = yo + carro + comidaCalle + mercado + gastosFijos;
 
     const efectivo = getN('efectivo');
     const nequi = getN('nequi');
@@ -105,7 +106,7 @@ function calcularTotales() {
     }
 
     const inputsVacios = trabajo === 0 && gasolina === 0 && pass === 0 && ahorro === 0 && deudaUber === 0 &&
-                         yo === 0 && carro === 0 && gastosFijos === 0 && comidaCalle === 0 &&
+                         yo === 0 && carro === 0 && gastosFijos === 0 && comidaCalle === 0 && mercado === 0 &&
                          efectivo === 0 && nequi === 0 && pendiente === 0;
 
     const deberiaTener = inputsVacios ? 0 : (tengoAyer + gananciaNeto - gastoTotal);
@@ -302,7 +303,7 @@ function exportarMesExcel(mesKey) {
     csvContent += "Fecha;Trabajo Bruto;Gasolina;Pass;Deuda Uber;Ahorro Fijos;Ganancia Neto;Personal;Carro;Gastos Fijos;Comida Calle;Gasto Total;Efectivo;Nequi;Pendiente;Total Saldo;Diferencia Cuadre\n";
 
     let tBruto = 0, tGasolina = 0, tPass = 0, tDeuda = 0, tAhorro = 0, tNeto = 0;
-    let tPersonal = 0, tCarro = 0, tFijos = 0, tComida = 0, tGastoTotal = 0;
+    let tPersonal = 0, tCarro = 0, tFijos = 0, tComida = 0, tMercado = 0, tGastoTotal = 0;
 
     diasMes.forEach(r => {
         const bruto = Number(r.trabajo) || 0;
@@ -316,6 +317,7 @@ function exportarMesExcel(mesKey) {
         const carro = Number(r.carro) || 0;
         const fijos = Number(r.gastosFijos) || 0;
         const comida = Number(r.comidaCalle) || 0;
+        const mercado = Number(r.mercado) || 0;
         const gTotal = Number(r.gastoTotal) || 0;
 
         const efectivo = Number(r.efectivo) || 0;
@@ -325,12 +327,12 @@ function exportarMesExcel(mesKey) {
         const diferencia = Number(r.diferencia) || 0;
 
         tBruto += bruto; tGasolina += gas; tPass += pass; tDeuda += deuda; tAhorro += ahorro; tNeto += neto;
-        tPersonal += personal; tCarro += carro; tFijos += fijos; tComida += comida; tGastoTotal += gTotal;
+        tPersonal += personal; tCarro += carro; tFijos += fijos; tComida += comida; tMercado += mercado; tGastoTotal += gTotal;
 
-        csvContent += `${r.fecha};${bruto};${gas};${pass};${deuda};${ahorro};${neto};${personal};${carro};${fijos};${comida};${gTotal};${efectivo};${nequi};${pendiente};${totalTengo};${diferencia}\n`;
+        csvContent += `${r.fecha};${bruto};${gas};${pass};${deuda};${ahorro};${neto};${personal};${carro};${fijos};${comida};${mercado};${gTotal};${efectivo};${nequi};${pendiente};${totalTengo};${diferencia}\n`;
     });
 
-    csvContent += `\nTOTALES DEL MES;;;;;;${tNeto};${tPersonal};${tCarro};${tFijos};${tComida};${tGastoTotal};;;;;;\n`;
+    csvContent += `\nTOTALES DEL MES;;;;;;${tNeto};${tPersonal};${tCarro};${tFijos};${tComida};${tMercado};${tGastoTotal};;;;;;\n`;
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -365,8 +367,9 @@ function guardarDia() {
     const yo = getN('yo');
     const carro = getN('carro');
     const comidaCalle = getN('comidaCalle');
+    const mercado = getN('mercado');
     const gastosFijos = getN('gastoFijo');
-    const gastoTotal = yo + carro + comidaCalle + gastosFijos;
+    const gastoTotal = yo + carro + comidaCalle + mercado + gastosFijos;
 
     const efectivo = getN('efectivo');
     const nequi = getN('nequi');
@@ -393,6 +396,7 @@ function guardarDia() {
         yo,
         carro,
         comidaCalle,
+        mercado,
         gastosFijos,
         gastoTotal,
         efectivo,
@@ -416,7 +420,7 @@ function guardarDia() {
 
     const idsInputsMonetarios = [
         'trabajo', 'gasolina', 'pass', 'deudaUber', 'ahorro',
-        'yo', 'carro', 'comidaCalle', 'gastoFijo', 'efectivo', 'nequi', 'pendiente'
+        'yo', 'carro', 'comidaCalle', 'mercado', 'gastoFijo', 'efectivo', 'nequi', 'pendiente'
     ];
 
     idsInputsMonetarios.forEach(id => {
@@ -452,6 +456,7 @@ function editarDiaHistorial(fecha) {
     setVal('yo', registro.yo);
     setVal('carro', registro.carro);
     setVal('comidaCalle', registro.comidaCalle);
+    setVal('mercado', registro.mercado);
     setVal('gastoFijo', registro.gastosFijos);
 
     setVal('efectivo', registro.efectivo);
@@ -519,7 +524,7 @@ function cargarHistorial() {
         diasMes.sort((a, b) => a.fecha.localeCompare(b.fecha));
 
         let brutoMes = 0, gasolinaMes = 0, passMes = 0, ahorroMes = 0, deudaUberMes = 0, gananciaMes = 0;
-        let personalMes = 0, carroMes = 0, gastosFijosMes = 0, comidaMes = 0, gastosTotalesMes = 0;
+        let personalMes = 0, carroMes = 0, gastosFijosMes = 0, comidaMes = 0, mercadoMes = 0, gastosTotalesMes = 0;
 
         diasMes.forEach(d => {
             brutoMes += Number(d.trabajo) || 0;
@@ -533,6 +538,7 @@ function cargarHistorial() {
             carroMes += Number(d.carro) || 0;
             gastosFijosMes += Number(d.gastosFijos) || 0;
             comidaMes += Number(d.comidaCalle) || 0;
+            mercadoMes += Number(d.mercado) || 0;
             gastosTotalesMes += Number(d.gastoTotal) || 0;
         });
 
@@ -570,6 +576,7 @@ function cargarHistorial() {
                         <div>Carro: ${fmt(carroMes)}</div>
                         <div>Gastos Fijos: ${fmt(gastosFijosMes)}</div>
                         <div>Comida: ${fmt(comidaMes)}</div>
+                        <div>Mercado: ${fmt(mercadoMes)}</div>
                         <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(244, 63, 94, 0.3); color: #f43f5e; font-size: 13px;">
                             <strong>Total: ${fmt(gastosTotalesMes)}</strong>
                         </div>
@@ -618,7 +625,7 @@ function cargarHistorial() {
         dias.sort((a, b) => a.fecha.localeCompare(b.fecha));
 
         let trabajoSemanal = 0, gasolinaSemanal = 0, passSemanal = 0, ahorroSemanal = 0, deudaUberSemanal = 0, gananciaSemanal = 0;
-        let yoSemanal = 0, carroSemanal = 0, gastosFijosSemanal = 0, comidaCalleSemanal = 0, gastosSemanal = 0;
+        let yoSemanal = 0, carroSemanal = 0, gastosFijosSemanal = 0, comidaCalleSemanal = 0, mercadoSemanal = 0, gastosSemanal = 0;
 
         dias.forEach(d => {
             trabajoSemanal += Number(d.trabajo) || 0;
@@ -632,6 +639,7 @@ function cargarHistorial() {
             carroSemanal += Number(d.carro) || 0;
             gastosFijosSemanal += Number(d.gastosFijos) || 0;
             comidaCalleSemanal += Number(d.comidaCalle) || 0;
+            mercadoSemanal += Number(d.mercado) || 0;
             gastosSemanal += Number(d.gastoTotal) || 0;
         });
 
@@ -707,6 +715,7 @@ function cargarHistorial() {
                         <div>Carro: ${fmt(carroSemanal)}</div>
                         <div>Gastos Fijos: ${fmt(gastosFijosSemanal)}</div>
                         <div>Comida: ${fmt(comidaCalleSemanal)}</div>
+                        <div>Mercado: ${fmt(mercadoSemanal)}</div>
                         <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(244, 63, 94, 0.3); color: #f43f5e; font-size: 13px;">
                             <strong>Total: ${fmt(gastosSemanal)}</strong>
                         </div>
@@ -762,7 +771,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const idsInputsMonetarios = [
         'trabajo', 'gasolina', 'pass', 'deudaUber', 'ahorro',
-        'yo', 'carro', 'comidaCalle', 'gastoFijo', 'efectivo', 'nequi', 'pendiente'
+        'yo', 'carro', 'comidaCalle', 'mercado', 'gastoFijo', 'efectivo', 'nequi', 'pendiente'
     ];
 
     idsInputsMonetarios.forEach(id => {
