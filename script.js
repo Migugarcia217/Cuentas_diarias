@@ -483,283 +483,238 @@ function eliminarDiaHistorial(fecha) {
 // ==========================================
 
 function cargarHistorial() {
-    const contenedor = document.getElementById('historial');
-    if (!contenedor) return;
+            const contenedor = document.getElementById('historial');
+            if (!contenedor) return;
 
-    const registros = JSON.parse(localStorage.getItem('registrosGastos')) || [];
-    contenedor.innerHTML = '';
+            const registros = JSON.parse(localStorage.getItem('registrosGastos')) || [];
+            contenedor.innerHTML = '';
 
-    if (registros.length === 0) {
-        contenedor.innerHTML = '<p style="color:#94a3b8; text-align:center;">No hay días guardados aún.</p>';
-        return;
-    }
+            if (registros.length === 0) {
+                contenedor.innerHTML = '<p style="color:#94a3b8; text-align:center;">No hay días guardados aún.</p>';
+                return;
+            }
 
-    const meses = {};
-    registros.forEach(r => {
-        if (!r.fecha) return;
-        const partes = r.fecha.split('-');
-        if (partes.length < 2) return;
-        const anio = partes[0];
-        const mesStr = partes[1];
-        const mesKey = `${anio}-${mesStr}`;
-        if (!meses[mesKey]) {
-            meses[mesKey] = [];
-        }
-        meses[mesKey].push(r);
-    });
+            // FUNCIÓN AUXILIAR PARA GENERAR EL HTML DE LAS TARJETAS (COMPATIBLE PARA MESES Y SEMANAS)
+            function generarHtmlTarjeta(titulo, diasList) {
+                let trabajoTotal = 0, gasolinaTotal = 0, passTotal = 0, ahorroTotal = 0, deudaUberTotal = 0, gananciaTotal = 0;
+                let yoTotal = 0, carroTotal = 0, gastosFijosTotal = 0, comidaCalleTotal = 0, mercadoTotal = 0, gastosTotal = 0;
 
-    const mesesOrdenados = Object.keys(meses).sort((a, b) => b.localeCompare(a));
-    const nombresMeses = {
-        '01': 'Enero', '02': 'Febrero', '03': 'Marzo', '04': 'Abril',
-        '05': 'Mayo', '06': 'Junio', '07': 'Julio', '08': 'Agosto',
-        '09': 'Septiembre', '10': 'Octubre', '11': 'Noviembre', '12': 'Diciembre'
-    };
+                diasList.forEach(d => {
+                    trabajoTotal += Number(d.trabajoBruto) || Number(d.trabajo) || 0;
+                    gananciaTotal += Number(d.gananciaNeto) || 0;
+                    gastosTotal += Number(d.gastoTotal) || 0;
 
-    let htmlResumenesMensuales = '';
-    mesesOrdenados.forEach((mesKey) => {
-        const partesMes = mesKey.split('-');
-        const anio = partesMes[0];
-        const mesNum = partesMes[1];
-        const diasMes = meses[mesKey];
-        diasMes.sort((a, b) => a.fecha.localeCompare(b.fecha));
+                    if (d.conceptosTrabajoDia) {
+                        d.conceptosTrabajoDia.forEach(item => {
+                            const nombre = item.concepto.toLowerCase();
+                            const val = item.valor || 0;
+                            if (nombre.includes('gasolina')) gasolinaTotal += val;
+                            else if (nombre.includes('pass')) passTotal += val;
+                            else if (nombre.includes('uber') || nombre.includes('deuda')) deudaUberTotal += val;
+                            else if (nombre.includes('ahorro')) ahorroTotal += val;
+                        });
+                    } else {
+                        gasolinaTotal += Number(d.gasolina) || 0;
+                        passTotal += Number(d.pass) || 0;
+                        ahorroTotal += Number(d.ahorro) || 0;
+                        deudaUberTotal += Number(d.deudaUber) || 0;
+                    }
 
-        let brutoMes = 0, gasolinaMes = 0, passMes = 0, ahorroMes = 0, deudaUberMes = 0, gananciaMes = 0;
-        let personalMes = 0, carroMes = 0, gastosFijosMes = 0, comidaMes = 0, mercadoMes = 0, gastosTotalesMes = 0;
+                    if (d.conceptosGastoDia) {
+                        d.conceptosGastoDia.forEach(item => {
+                            const nombre = item.concepto.toLowerCase();
+                            const val = item.valor || 0;
+                            if (nombre.includes('personal') || nombre.includes('yo')) yoTotal += val;
+                            else if (nombre.includes('carro')) carroTotal += val;
+                            else if (nombre.includes('fijo')) gastosFijosTotal += val;
+                            else if (nombre.includes('comida')) comidaCalleTotal += val;
+                            else if (nombre.includes('mercado')) mercadoTotal += val;
+                        });
+                    } else {
+                        yoTotal += Number(d.yo) || 0;
+                        carroTotal += Number(d.carro) || 0;
+                        gastosFijosTotal += Number(d.gastosFijos) || 0;
+                        comidaCalleTotal += Number(d.comidaCalle) || 0;
+                        mercadoTotal += Number(d.mercado) || 0;
+                    }
+                });
 
-        diasMes.forEach(d => {
-            brutoMes += Number(d.trabajo) || 0;
-            gasolinaMes += Number(d.gasolina) || 0;
-            passMes += Number(d.pass) || 0;
-            ahorroMes += Number(d.ahorro) || 0;
-            deudaUberMes += Number(d.deudaUber) || 0;
-            gananciaMes += Number(d.gananciaNeto) || 0;
+                const diferenciaTotal = gananciaTotal - gastosTotal;
+                const ultimoDia = diasList[diasList.length - 1];
+                const efectivoTotal = ultimoDia ? (Number(ultimoDia.efectivo) || 0) : 0;
+                const nequiTotal = ultimoDia ? (Number(ultimoDia.nequi) || 0) : 0;
+                const pendienteTotal = ultimoDia ? (Number(ultimoDia.pendiente) || 0) : 0;
+                const tengoTotalReal = efectivoTotal + nequiTotal + pendienteTotal;
+                const colorDif = diferenciaTotal < 0 ? '#f43f5e' : '#22c55e';
 
-            personalMes += Number(d.yo) || 0;
-            carroMes += Number(d.carro) || 0;
-            gastosFijosMes += Number(d.gastosFijos) || 0;
-            comidaMes += Number(d.comidaCalle) || 0;
-            mercadoMes += Number(d.mercado) || 0;
-            gastosTotalesMes += Number(d.gastoTotal) || 0;
-        });
-
-        const diferenciaMes = gananciaMes - gastosTotalesMes;
-        const colorDifMes = diferenciaMes < 0 ? '#f43f5e' : '#22c55e';
-        const nombreMesTexto = `${nombresMeses[mesNum] || mesNum} ${anio}`;
-
-        htmlResumenesMensuales += `
-            <div style="background: #030712; border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 12px; padding: 16px; margin-bottom: 15px; width: 100%; box-sizing: border-box; color: #ffffff; box-shadow: 0 0 10px rgba(56, 189, 248, 0.15);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <div style="font-size: 15px; font-weight: 700; color: #ffffff;">
-                        📊 ${nombreMesTexto.toUpperCase()}
-                    </div>
-                    <button onclick="exportarMesExcel('${mesKey}')" style="background: rgba(34, 197, 94, 0.2); border: 1px solid #22c55e; color: #22c55e; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 4px; font-weight: 600;" title="Descargar Excel de este mes">
-                        📥 Descargar Excel
-                    </button>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
-                    <div style="background: rgba(20, 83, 45, 0.3); border: 1px solid rgba(34, 197, 94, 0.3); padding: 12px; border-radius: 12px; font-size: 12px; color: #ffffff;">
-                        <strong style="color: #22c55e; display: block; margin-bottom: 6px; font-size: 13px;">💼 TRABAJO MES</strong>
-                        <div>Bruto: <strong>${fmt(brutoMes)}</strong></div>
-                        <div>Gasolina: -${fmt(gasolinaMes)}</div>
-                        <div>Pass: -${fmt(passMes)}</div>
-                        <div>Deuda Uber: -${fmt(deudaUberMes)}</div>
-                        <div>Ahorro Fijos: -${fmt(ahorroMes)}</div>
-                        <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e; font-size: 13px;">
-                            <strong>Neto: ${fmt(gananciaMes)}</strong>
+                let htmlDias = '';
+                diasList.forEach(r => {
+                    const difNum = Number(r.diferencia) || 0;
+                    const colorDiaDif = difNum < 0 ? '#f43f5e' : '#22c55e';
+                    htmlDias += `
+                        <div style="border-left: 3px solid #38bdf8; padding: 12px; margin-bottom: 10px; border-radius: 10px; background: rgba(3, 7, 18, 0.4); width: 100%; box-sizing: border-box; color: #ffffff;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                <div>📅 <strong>${r.fecha}</strong></div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button type="button" onclick="editarDiaHistorial('${r.fecha}')" title="Editar" style="background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; color: #38bdf8; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 3px;">✏️ Editar</button>
+                                    <button type="button" onclick="eliminarDiaHistorial('${r.fecha}')" title="Eliminar" style="background: rgba(244, 63, 94, 0.2); border: 1px solid #f43f5e; color: #f43f5e; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 3px;">🗑 Eliminar</button>
+                                </div>
+                            </div>
+                            <div style="font-size: 12px; margin-bottom: 6px;">
+                                Ganancia Neto: <strong style="color:#22c55e;">${fmt(r.gananciaNeto)}</strong> | 
+                                Gastos: <strong style="color:#f43f5e;">${fmt(r.gastoTotal)}</strong> | 
+                                Dif: <strong style="color:${colorDiaDif};">${fmt(r.diferencia)}</strong>
+                            </div>
+                            <div style="background: rgba(255, 255, 255, 0.05); padding: 6px 8px; border-radius: 6px; font-size: 11px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
+                                <span>Efectivo: <strong>${fmt(r.efectivo)}</strong></span>
+                                <span>Nequi: <strong>${fmt(r.nequi)}</strong></span>
+                                <span style="color: #facc15;">⏳ Pendiente: <strong>${fmt(r.pendiente)}</strong></span>
+                                <span><strong>Total: ${fmt(r.tengoTotal)}</strong></span>
+                            </div>
                         </div>
-                    </div>
+                    `;
+                });
 
-                    <div style="background: rgba(159, 18, 57, 0.25); border: 1px solid rgba(244, 63, 94, 0.3); padding: 12px; border-radius: 12px; font-size: 12px; color: #ffffff;">
-                        <strong style="color: #f43f5e; display: block; margin-bottom: 6px; font-size: 13px;">💸 GASTOS MES</strong>
-                        <div>Personal: <strong>${fmt(personalMes)}</strong></div>
-                        <div>Carro: ${fmt(carroMes)}</div>
-                        <div>Gastos Fijos: ${fmt(gastosFijosMes)}</div>
-                        <div>Comida: ${fmt(comidaMes)}</div>
-                        <div>Mercado: ${fmt(mercadoMes)}</div>
-                        <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(244, 63, 94, 0.3); color: #f43f5e; font-size: 13px;">
-                            <strong>Total: ${fmt(gastosTotalesMes)}</strong>
+                return `
+                    <div style="background: #030712; border:2px solid #38bdf8; border-radius: 16px; padding: 18px; margin-bottom: 30px; box-sizing: border-box; width: 100%; box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);">
+                        <div style="font-weight:700; margin-bottom:14px; color:#38bdf8; font-size:15px; display: flex; align-items: center; gap: 6px; text-shadow: 0 0 8px rgba(56, 189, 248, 0.5);">
+                            📊 ${titulo}
                         </div>
-                    </div>
-                </div>
 
-                <div style="background: rgba(3, 7, 18, 0.8); width: 100%; box-sizing: border-box; padding: 10px 14px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 4px; border: 1px solid rgba(250, 204, 21, 0.4); box-shadow: 0 0 8px rgba(250, 204, 21, 0.15);">
-                    <span><strong>Balance Final Mes:</strong></span>
-                    <strong style="color:${colorDifMes}; font-size: 16px;">${fmt(diferenciaMes)}</strong>
-                </div>
-            </div>
-        `;
-    });
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+                            <div style="background: rgba(20, 83, 45, 0.3); border: 1px solid rgba(34, 197, 94, 0.4); padding: 12px; border-radius: 12px; font-size: 15px; color: #ffffff; box-shadow: 0 0 8px rgba(34, 197, 94, 0.15);">
+                                <strong style="color: #22c55e; display: block; margin-bottom: 6px; font-size: 16px; font-family:'Audiowide', cursive;">💼 TRABAJO</strong>
+                                <div>Trabajo: <strong>${fmt(trabajoTotal)}</strong></div>
+                                <div>Gasolina: -${fmt(gasolinaTotal)}</div>
+                                <div>Pass: -${fmt(passTotal)}</div>
+                                <div>Deuda Uber: -${fmt(deudaUberTotal)}</div>
+                                <div>Ahorro Fijos: -${fmt(ahorroTotal)}</div>
+                                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e; font-size: 16px;">
+                                    <strong>Neto: ${fmt(gananciaTotal)}</strong>
+                                </div>
+                            </div>
 
-    const desplegableMensualDiv = document.createElement('div');
-    desplegableMensualDiv.style.marginBottom = '20px';
-    desplegableMensualDiv.innerHTML = `
-        <div style="background: #030712; border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 16px; padding: 16px; width: 100%; box-sizing: border-box; box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);">
-            <details>
-                <summary style="cursor: pointer; font-size: 15px; color: #ffffff; font-weight: 700; list-style: none; display: flex; justify-content: space-between; align-items: center;">
-                    <span>📂 Ver Resúmenes Mensuales</span>
-                    <span style="font-size: 12px; font-weight: normal;">(Click para desplegar) ▼</span>
-                </summary>
-                <div style="margin-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 15px;">
-                    ${htmlResumenesMensuales}
-                </div>
-            </details>
-        </div>
-    `;
-    contenedor.appendChild(desplegableMensualDiv);
-
-    const semanas = {};
-    registros.forEach(r => {
-        if (!r.fecha) return;
-        const lunesKey = obtenerLunesSemana(r.fecha);
-        if (!semanas[lunesKey]) {
-            semanas[lunesKey] = [];
-        }
-        semanas[lunesKey].push(r);
-    });
-
-    const semanasOrdenadas = Object.keys(semanas).sort((a, b) => new Date(b) - new Date(a));
-
-    semanasOrdenadas.forEach((lunesKey) => {
-        const dias = semanas[lunesKey];
-        dias.sort((a, b) => a.fecha.localeCompare(b.fecha));
-
-        let trabajoSemanal = 0, gasolinaSemanal = 0, passSemanal = 0, ahorroSemanal = 0, deudaUberSemanal = 0, gananciaSemanal = 0;
-        let yoSemanal = 0, carroSemanal = 0, gastosFijosSemanal = 0, comidaCalleSemanal = 0, mercadoSemanal = 0, gastosSemanal = 0;
-
-        dias.forEach(d => {
-            trabajoSemanal += Number(d.trabajo) || 0;
-            gasolinaSemanal += Number(d.gasolina) || 0;
-            passSemanal += Number(d.pass) || 0;
-            ahorroSemanal += Number(d.ahorro) || 0;
-            deudaUberSemanal += Number(d.deudaUber) || 0;
-            gananciaSemanal += Number(d.gananciaNeto) || 0;
-
-            yoSemanal += Number(d.yo) || 0;
-            carroSemanal += Number(d.carro) || 0;
-            gastosFijosSemanal += Number(d.gastosFijos) || 0;
-            comidaCalleSemanal += Number(d.comidaCalle) || 0;
-            mercadoSemanal += Number(d.mercado) || 0;
-            gastosSemanal += Number(d.gastoTotal) || 0;
-        });
-
-        const diferenciaSemanal = gananciaSemanal - gastosSemanal;
-        const ultimoDiaSemana = dias[dias.length - 1];
-        const efectivoSemanal = ultimoDiaSemana ? (Number(ultimoDiaSemana.efectivo) || 0) : 0;
-        const nequiSemanal = ultimoDiaSemana ? (Number(ultimoDiaSemana.nequi) || 0) : 0;
-        const pendienteSemanal = ultimoDiaSemana ? (Number(ultimoDiaSemana.pendiente) || 0) : 0;
-        const tengoTotalSemanal = efectivoSemanal + nequiSemanal + pendienteSemanal;
-
-        const tituloSemana = formatearRangoSemana(lunesKey);
-        const colorDifSemanal = diferenciaSemanal < 0 ? '#f43f5e' : '#22c55e';
-
-        let htmlDias = '';
-        dias.forEach(r => {
-            const difNum = Number(r.diferencia) || 0;
-            const colorDif = difNum < 0 ? '#f43f5e' : '#22c55e';
-            const rEfectivo = Number(r.efectivo) || 0;
-            const rNequi = Number(r.nequi) || 0;
-            const rPendiente = Number(r.pendiente) || 0;
-            const rTotal = Number(r.tengoTotal) || 0;
-
-            htmlDias += `
-                <div style="border-left: 3px solid #38bdf8; padding: 12px; margin-bottom: 10px; border-radius: 10px; background: rgba(3, 7, 18, 0.4); width: 100%; box-sizing: border-box; color: #ffffff;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                        <div>📅 <strong>${r.fecha}</strong></div>
-                        <div style="display: flex; gap: 8px;">
-                            <button onclick="editarDiaHistorial('${r.fecha}')" title="Editar" style="background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; color: #38bdf8; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 3px;">✏️ Editar</button>
-                            <button onclick="eliminarDiaHistorial('${r.fecha}')" title="Eliminar" style="background: rgba(244, 63, 94, 0.2); border: 1px solid #f43f5e; color: #f43f5e; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 3px;">🗑 Eliminar</button>
+                            <div style="background: rgba(159, 18, 57, 0.25); border: 1px solid rgba(244, 63, 94, 0.4); padding: 12px; border-radius: 12px; font-size: 15px; color: #ffffff; box-shadow: 0 0 8px rgba(244, 63, 94, 0.15);">
+                                <strong style="color: #f43f5e; display: block; margin-bottom: 6px; font-size: 16px; font-family:'Audiowide', cursive;">💸 GASTOS</strong>
+                                <div>Personal: <strong>${fmt(yoTotal)}</strong></div>
+                                <div>Carro: ${fmt(carroTotal)}</div>
+                                <div>Gastos Fijos: ${fmt(gastosFijosTotal)}</div>
+                                <div>Comida: ${fmt(comidaCalleTotal)}</div>
+                                <div>Mercado: ${fmt(mercadoTotal)}</div>
+                                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(244, 63, 94, 0.3); color: #f43f5e; font-size: 16px;">
+                                    <strong>Total: ${fmt(gastosTotal)}</strong>
+                                </div>
+                            </div>
                         </div>
+
+                        <div style="background: rgba(15, 23, 42, 0.9); width: 100%; box-sizing: border-box; padding: 10px 14px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 20px; border: 1px solid rgba(34, 197, 94, 0.5); box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);">
+                            <span><strong>Balance Final:</strong></span>
+                            <strong style="color:${colorDif}; font-size: 16px;">${fmt(diferenciaTotal)}</strong>
+                        </div>
+
+                        <div style="background: rgba(13, 17, 23, 0.9); border: 2px solid rgba(250, 204, 21, 0.62); padding: 16px 14px; border-radius: 12px; font-size: 15px; margin-bottom: 15px; width: 100%; box-sizing: border-box; color: #ffffff; box-shadow: 0 0 8px rgba(56, 189, 248, 0.15);">
+                            <strong style="color: #38bdf8; display: block; margin-bottom: 8px; font-size: 16px; font-family:'Audiowide', cursive;">💰 SALDO Y DISPONIBILIDAD</strong>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span>Efectivo total:</span> <strong>${fmt(efectivoTotal)}</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span>Nequi total:</span> <strong>${fmt(nequiTotal)}</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: #facc15;">
+                                <span>⏳ Pendiente por cobrar:</span> <strong>${fmt(pendienteTotal)}</strong>
+                            </div>
+                            <div style="border-top: 1px solid rgba(56, 189, 248, 0.2); padding-top: 8px; display: flex; justify-content: space-between; font-size: 16px;">
+                                <strong style="font-family:'Audiowide', cursive; color:#00ff88;">TOTAL SALDO REAL :</strong>
+                                <strong style="color: #00ff88;">${fmt(tengoTotalReal)}</strong>
+                            </div>
+                        </div>
+
+                        <details style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 10px;">
+                            <summary style="cursor: pointer; font-size: 14px; color: #a855f7; font-weight: 700; padding: 4px 0;">
+                                <span>Ver detalle por días (${diasList.length}) ▼</span>
+                            </summary>
+                            <div style="margin-top: 12px; color: #ffffff;">
+                                ${htmlDias}
+                            </div>
+                        </details>
                     </div>
-                    <div style="font-size: 12px; margin-bottom: 6px;">
-                        Ganancia Neto: <strong style="color:#22c55e;">${fmt(r.gananciaNeto)}</strong> | 
-                        Gastos: <strong style="color:#f43f5e;">${fmt(r.gastoTotal)}</strong> | 
-                        Dif: <strong style="color:${colorDif};">${fmt(r.diferencia)}</strong>
-                    </div>
-                    <div style="background: rgba(255, 255, 255, 0.05); padding: 6px 8px; border-radius: 6px; font-size: 11px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
-                        <span>Efectivo: <strong>${fmt(rEfectivo)}</strong></span>
-                        <span>Nequi: <strong>${fmt(rNequi)}</strong></span>
-                        <span style="color: #facc15;">⏳ Pendiente: <strong>${fmt(rPendiente)}</strong></span>
-                        <span><strong>Total: ${fmt(rTotal)}</strong></span>
-                    </div>
+                `;
+            }
+
+            // 1. SECCIÓN RESÚMENES MENSUALES (CON EL MISMO FORMATO DE TARJETA)
+            const meses = {};
+            registros.forEach(r => {
+                if (!r.fecha) return;
+                const partes = r.fecha.split('-');
+                if (partes.length < 2) return;
+                const mesKey = `${partes[0]}-${partes[1]}`;
+                if (!meses[mesKey]) meses[mesKey] = [];
+                meses[mesKey].push(r);
+            });
+
+            const mesesOrdenados = Object.keys(meses).sort((a, b) => b.localeCompare(a));
+            const nombresMeses = {
+                '01': 'Enero', '02': 'Febrero', '03': 'Marzo', '04': 'Abril',
+                '05': 'Mayo', '06': 'Junio', '07': 'Julio', '08': 'Agosto',
+                '09': 'Septiembre', '10': 'Octubre', '11': 'Noviembre', '12': 'Diciembre'
+            };
+
+            let htmlResumenesMensuales = '';
+            mesesOrdenados.forEach((mesKey) => {
+                const partesMes = mesKey.split('-');
+                const diasMes = meses[mesKey];
+                diasMes.sort((a, b) => a.fecha.localeCompare(b.fecha));
+                const nombreMesTexto = `${nombresMeses[partesMes[1]] || partesMes[1]} ${partesMes[0]}`;
+                htmlResumenesMensuales += generarHtmlTarjeta(nombreMesTexto.toUpperCase(), diasMes);
+            });
+
+            const desplegableMensualDiv = document.createElement('div');
+            desplegableMensualDiv.style.marginBottom = '20px';
+            desplegableMensualDiv.innerHTML = `
+                <div style="background: #030712; border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 16px; padding: 16px;">
+                    <details>
+                        <summary style="cursor: pointer; font-size: 15px; color: #ffffff; font-weight: 700;">📂 Ver Resúmenes Mensuales ▼</summary>
+                        <div style="margin-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 15px;">
+                            ${htmlResumenesMensuales}
+                        </div>
+                    </details>
                 </div>
             `;
-        });
+            contenedor.appendChild(desplegableMensualDiv);
 
-        const semanaDiv = document.createElement('div');
-        semanaDiv.style.marginBottom = '20px';
+            // 2. SECCIÓN RESÚMENES SEMANALES
+            const semanas = {};
+            registros.forEach(r => {
+                if (!r.fecha) return;
+                const lunesKey = obtenerLunesSemana(r.fecha);
+                if (!semanas[lunesKey]) semanas[lunesKey] = [];
+                semanas[lunesKey].push(r);
+            });
 
-        // TARJETA SEMANAL CON BORDE NEÓN CIAN Y SOMBRA BRILLANTE
-        semanaDiv.innerHTML = `
-            <div style="background: #030712; border:2px solid #38bdf8; border-radius: 16px; padding: 18px; margin-bottom: 80px; box-sizing: border-box; width: 100%; box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);">
-                <div style="font-weight:700; margin-bottom:14px; color:#38bdf8; font-size:15px; display: flex; align-items: center; gap: 6px; text-shadow: 0 0 8px rgba(56, 189, 248, 0.5);">
-                    ${tituloSemana}
-                </div>
+            const semanasOrdenadas = Object.keys(semanas).sort((a, b) => new Date(b) - new Date(a));
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
-                    <div style="background: rgba(20, 83, 45, 0.3); border: 1px solid rgba(34, 197, 94, 0.4); padding: 12px; border-radius: 12px; font-size: 18px; color: #ffffff; box-shadow: 0 0 8px rgba(34, 197, 94, 0.15);">
-                        <strong style="color: #22c55e; display: block; margin-bottom: 6px; font-size: 19px;">💼 TRABAJO</strong>
-                        <div>Trabajo: <strong>${fmt(trabajoSemanal)}</strong></div>
-                        <div>Gasolina: -${fmt(gasolinaSemanal)}</div>
-                        <div>Pass: -${fmt(passSemanal)}</div>
-                        <div>Deuda Uber: -${fmt(deudaUberSemanal)}</div>
-                        <div>Ahorro Fijos: -${fmt(ahorroSemanal)}</div>
-                        <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e; font-size: 18px;">
-                            <strong>Neto: ${fmt(gananciaSemanal)}</strong>
+            let htmlResumenesSemanales = '';
+            semanasOrdenadas.forEach((lunesKey) => {
+                const dias = semanas[lunesKey];
+                dias.sort((a, b) => a.fecha.localeCompare(b.fecha));
+                const tituloSemana = formatearRangoSemana(lunesKey);
+                htmlResumenesSemanales += generarHtmlTarjeta(tituloSemana, dias);
+            });
+
+            const desplegableSemanalDiv = document.createElement('div');
+            desplegableSemanalDiv.style.marginBottom = '20px';
+            desplegableSemanalDiv.innerHTML = `
+                <div style="background: #030712; border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 16px; padding: 16px;">
+                    <details>
+                        <summary style="cursor: pointer; font-size: 15px; color: #ffffff; font-weight: 700;">📂 Ver Resúmenes Semanales ▼</summary>
+                        <div style="margin-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 15px;">
+                            ${htmlResumenesSemanales}
                         </div>
-                    </div>
-
-                    <div style="background: rgba(159, 18, 57, 0.25); border: 1px solid rgba(244, 63, 94, 0.4); padding: 12px; border-radius: 12px; font-size: 18px; color: #ffffff; box-shadow: 0 0 8px rgba(244, 63, 94, 0.15);">
-                        <strong style="color: #f43f5e; display: block; margin-bottom: 6px; font-size: 19px;">💸 GASTOS</strong>
-                        <div>Personal: <strong>${fmt(yoSemanal)}</strong></div>
-                        <div>Carro: ${fmt(carroSemanal)}</div>
-                        <div>Gastos Fijos: ${fmt(gastosFijosSemanal)}</div>
-                        <div>Comida: ${fmt(comidaCalleSemanal)}</div>
-                        <div>Mercado: ${fmt(mercadoSemanal)}</div>
-                        <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(244, 63, 94, 0.3); color: #f43f5e; font-size: 18px;">
-                            <strong>Total: ${fmt(gastosSemanal)}</strong>
-                        </div>
-                    </div>
+                    </details>
                 </div>
-
-            <div style="background: rgba(15, 23, 42, 0.9); width: 100%; box-sizing: border-box; padding: 5px 14px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 40px; border: 1px solid rgba(34, 197, 94, 0.5); box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);">
-                    <span><strong>Cuadre Final Semana:</strong></span>
-                    <strong style="color:${colorDifSemanal}; font-size: 16px;">${fmt(diferenciaSemanal)}</strong>
-                </div>
-
-                <div style="background: rgba(15, 23, 42, 0.8); border: 2px solid rgba(250, 204, 21, 0.62); padding: 20px 14px; border-radius: 10px; font-size: 18px; margin-bottom: 12px; width: 100%; box-sizing: border-box; color: #ffffff; box-shadow: 0 0 8px rgba(56, 189, 248, 0.15);">
-                    <strong style="color: #38bdf8; display: block; margin-bottom: 8px; font-size: 22px;">💰 SALDO Y DISPONIBILIDAD SEMANAL</strong>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                        <span>Efectivo total:</span> <strong>${fmt(efectivoSemanal)}</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                        <span>Nequi total:</span> <strong>${fmt(nequiSemanal)}</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: #facc15;">
-                        <span>⏳ Pendiente por cobrar:</span> <strong>${fmt(pendienteSemanal)}</strong>
-                    </div>
-                    <div style="border-top: 1px solid rgba(56, 189, 248, 0.2); padding-top: 8px; display: flex; justify-content: space-between; font-size: 22px;">
-                        <span><strong>TOTAL SALDO REAL :</strong></span>
-                        <strong>${fmt(tengoTotalSemanal)}</strong>
-                    </div>
-                </div>
-
-                
-
-                <details style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 10px;">
-                    <summary style="cursor: pointer; font-size: 18px; color: #a855f7; font-weight: 700; padding: 4px 0;">
-                        <span>Ver detalle por días (${dias.length}) ▼</span>
-                    </summary>
-                    <div style="margin-top: 12px; color: #ffffff;">
-                        ${htmlDias}
-                    </div>
-                </details>
-            </div>
-        `;
-
-        contenedor.appendChild(semanaDiv);
-    });
-}
+            `;
+            contenedor.appendChild(desplegableSemanalDiv);
+        }
 
 // ==========================================
 // EVENTOS Y LISTENERS
