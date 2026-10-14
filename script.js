@@ -583,7 +583,7 @@ function cargarHistorial() {
                     </div>
                 </div>
 
-                <div style="background: rgba(3, 7, 18, 0.8); width: 100%; box-sizing: border-box; padding: 10px 14px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; border: 1px solid rgba(250, 204, 21, 0.4); box-shadow: 0 0 8px rgba(250, 204, 21, 0.15);">
+                <div style="background: rgba(3, 7, 18, 0.8); width: 100%; box-sizing: border-box; padding: 10px 14px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 4px; border: 1px solid rgba(250, 204, 21, 0.4); box-shadow: 0 0 8px rgba(250, 204, 21, 0.15);">
                     <span><strong>Balance Final Mes:</strong></span>
                     <strong style="color:${colorDifMes}; font-size: 16px;">${fmt(diferenciaMes)}</strong>
                 </div>
@@ -691,39 +691,44 @@ function cargarHistorial() {
 
         // TARJETA SEMANAL CON BORDE NEÓN CIAN Y SOMBRA BRILLANTE
         semanaDiv.innerHTML = `
-            <div style="background: #030712; border: 1px solid rgba(56, 189, 248, 0.5); border-radius: 16px; padding: 18px; margin-bottom: 20px; box-sizing: border-box; width: 100%; box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);">
+            <div style="background: #030712; border:2px solid #38bdf8; border-radius: 16px; padding: 18px; margin-bottom: 80px; box-sizing: border-box; width: 100%; box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);">
                 <div style="font-weight:700; margin-bottom:14px; color:#38bdf8; font-size:15px; display: flex; align-items: center; gap: 6px; text-shadow: 0 0 8px rgba(56, 189, 248, 0.5);">
                     ${tituloSemana}
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
-                    <div style="background: rgba(20, 83, 45, 0.3); border: 1px solid rgba(34, 197, 94, 0.4); padding: 12px; border-radius: 12px; font-size: 12px; color: #ffffff; box-shadow: 0 0 8px rgba(34, 197, 94, 0.15);">
-                        <strong style="color: #22c55e; display: block; margin-bottom: 6px; font-size: 13px;">💼 TRABAJO</strong>
-                        <div>Bruto: <strong>${fmt(trabajoSemanal)}</strong></div>
+                    <div style="background: rgba(20, 83, 45, 0.3); border: 1px solid rgba(34, 197, 94, 0.4); padding: 12px; border-radius: 12px; font-size: 18px; color: #ffffff; box-shadow: 0 0 8px rgba(34, 197, 94, 0.15);">
+                        <strong style="color: #22c55e; display: block; margin-bottom: 6px; font-size: 19px;">💼 TRABAJO</strong>
+                        <div>Trabajo: <strong>${fmt(trabajoSemanal)}</strong></div>
                         <div>Gasolina: -${fmt(gasolinaSemanal)}</div>
                         <div>Pass: -${fmt(passSemanal)}</div>
                         <div>Deuda Uber: -${fmt(deudaUberSemanal)}</div>
                         <div>Ahorro Fijos: -${fmt(ahorroSemanal)}</div>
-                        <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e; font-size: 13px;">
+                        <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e; font-size: 18px;">
                             <strong>Neto: ${fmt(gananciaSemanal)}</strong>
                         </div>
                     </div>
 
-                    <div style="background: rgba(159, 18, 57, 0.25); border: 1px solid rgba(244, 63, 94, 0.4); padding: 12px; border-radius: 12px; font-size: 12px; color: #ffffff; box-shadow: 0 0 8px rgba(244, 63, 94, 0.15);">
-                        <strong style="color: #f43f5e; display: block; margin-bottom: 6px; font-size: 13px;">💸 GASTOS</strong>
+                    <div style="background: rgba(159, 18, 57, 0.25); border: 1px solid rgba(244, 63, 94, 0.4); padding: 12px; border-radius: 12px; font-size: 18px; color: #ffffff; box-shadow: 0 0 8px rgba(244, 63, 94, 0.15);">
+                        <strong style="color: #f43f5e; display: block; margin-bottom: 6px; font-size: 19px;">💸 GASTOS</strong>
                         <div>Personal: <strong>${fmt(yoSemanal)}</strong></div>
                         <div>Carro: ${fmt(carroSemanal)}</div>
                         <div>Gastos Fijos: ${fmt(gastosFijosSemanal)}</div>
                         <div>Comida: ${fmt(comidaCalleSemanal)}</div>
                         <div>Mercado: ${fmt(mercadoSemanal)}</div>
-                        <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(244, 63, 94, 0.3); color: #f43f5e; font-size: 13px;">
+                        <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(244, 63, 94, 0.3); color: #f43f5e; font-size: 18px;">
                             <strong>Total: ${fmt(gastosSemanal)}</strong>
                         </div>
                     </div>
                 </div>
 
-                <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.4); padding: 12px 14px; border-radius: 10px; font-size: 12px; margin-bottom: 12px; width: 100%; box-sizing: border-box; color: #ffffff; box-shadow: 0 0 8px rgba(56, 189, 248, 0.15);">
-                    <strong style="color: #38bdf8; display: block; margin-bottom: 8px; font-size: 13px;">💰 SALDO Y DISPONIBILIDAD SEMANAL</strong>
+            <div style="background: rgba(15, 23, 42, 0.9); width: 100%; box-sizing: border-box; padding: 5px 14px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 40px; border: 1px solid rgba(34, 197, 94, 0.5); box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);">
+                    <span><strong>Cuadre Final Semana:</strong></span>
+                    <strong style="color:${colorDifSemanal}; font-size: 16px;">${fmt(diferenciaSemanal)}</strong>
+                </div>
+
+                <div style="background: rgba(15, 23, 42, 0.8); border: 2px solid rgba(250, 204, 21, 0.62); padding: 20px 14px; border-radius: 10px; font-size: 18px; margin-bottom: 12px; width: 100%; box-sizing: border-box; color: #ffffff; box-shadow: 0 0 8px rgba(56, 189, 248, 0.15);">
+                    <strong style="color: #38bdf8; display: block; margin-bottom: 8px; font-size: 22px;">💰 SALDO Y DISPONIBILIDAD SEMANAL</strong>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
                         <span>Efectivo total:</span> <strong>${fmt(efectivoSemanal)}</strong>
                     </div>
@@ -733,19 +738,16 @@ function cargarHistorial() {
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: #facc15;">
                         <span>⏳ Pendiente por cobrar:</span> <strong>${fmt(pendienteSemanal)}</strong>
                     </div>
-                    <div style="border-top: 1px solid rgba(56, 189, 248, 0.2); padding-top: 8px; display: flex; justify-content: space-between; font-size: 13px;">
-                        <span><strong>Total Saldo (Incluyendo pendiente):</strong></span>
+                    <div style="border-top: 1px solid rgba(56, 189, 248, 0.2); padding-top: 8px; display: flex; justify-content: space-between; font-size: 22px;">
+                        <span><strong>TOTAL SALDO REAL :</strong></span>
                         <strong>${fmt(tengoTotalSemanal)}</strong>
                     </div>
                 </div>
 
-                <div style="background: rgba(15, 23, 42, 0.9); width: 100%; box-sizing: border-box; padding: 12px 14px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 12px; border: 1px solid rgba(34, 197, 94, 0.5); box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);">
-                    <span><strong>Cuadre Final Semana:</strong></span>
-                    <strong style="color:${colorDifSemanal}; font-size: 16px;">${fmt(diferenciaSemanal)}</strong>
-                </div>
+                
 
                 <details style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 10px;">
-                    <summary style="cursor: pointer; font-size: 13px; color: #a855f7; font-weight: 700; padding: 4px 0;">
+                    <summary style="cursor: pointer; font-size: 18px; color: #a855f7; font-weight: 700; padding: 4px 0;">
                         <span>Ver detalle por días (${dias.length}) ▼</span>
                     </summary>
                     <div style="margin-top: 12px; color: #ffffff;">
