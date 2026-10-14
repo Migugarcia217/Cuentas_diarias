@@ -4,307 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Control Financiero - HoloGlass</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Audiowide&family=Outfit:wght@300;400;600;700&display=swap');
-
-        :root {
-            --holo-cyan: #00f0ff;
-            --holo-pink: #ff007f;
-            --holo-green: #00ff88;
-            --holo-purple: #9d00ff;
-            --holo-yellow: #ffea00;
-            --glass-bg: rgba(13, 17, 23, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.12);
-        }
-
-        body {
-            font-family: 'Outfit', sans-serif;
-            background-color: #030508;
-            color: #ffffff;
-            margin: 0;
-            padding: 30px 20px;
-            box-sizing: border-box;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(157, 0, 255, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(0, 240, 255, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 50% 50%, rgba(255, 0, 127, 0.1) 0%, transparent 60%);
-            background-attachment: fixed;
-        }
-
-        /* TIPOGRAFÍA AUDIOWIDE Y EFECTO NEÓN EN EL TÍTULO PRINCIPAL */
-        h1 {
-            text-align: center;
-            letter-spacing: 3px;
-            margin-bottom: 30px;
-            font-size: 32px;
-            font-family: 'Audiowide', cursive, sans-serif;
-            background: linear-gradient(90deg, var(--holo-cyan), var(--holo-pink), var(--holo-green));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 25px rgba(0, 240, 255, 0.4);
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        /* Contenedor de Fecha */
-        .fecha-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 30px;
-            background: rgba(13, 17, 23, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            padding: 18px;
-            border-radius: 20px;
-            border: 1px solid var(--holo-cyan);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 240, 255, 0.25);
-        }
-
-        .fecha-container label {
-            color: var(--holo-cyan);
-            font-family: 'Audiowide', cursive, sans-serif;
-            font-size: 14px;
-            letter-spacing: 1px;
-            text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
-        }
-
-        .fecha-container input {
-            background: rgba(15, 23, 42, 0.95);
-            border: 2px solid var(--holo-cyan);
-            color: #ffffff;
-            padding: 10px 18px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            font-family: 'Outfit', sans-serif;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
-            color-scheme: dark;
-        }
-
-        /* Grid principal de 3 columnas */
-        .grid-dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 24px;
-            box-sizing: border-box;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-        }
-
-        /* BORDES DE NEÓN LÍQUIDO FLOTANTE */
-        .card-1 {
-            border-top: 2px solid var(--holo-pink);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 0, 127, 0.2);
-        }
-
-        .card-2 {
-            border-top: 2px solid var(--holo-cyan);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 240, 255, 0.2);
-        }
-
-        .card-3 {
-            border-top: 2px solid var(--holo-green);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 136, 0.2);
-        }
-
-        /* TÍTULOS DE LAS TARJETAS CON TIPOGRAFÍA AUDIOWIDE */
-        .card-title {
-            font-size: 15px;
-            font-family: 'Audiowide', cursive, sans-serif;
-            margin-bottom: 20px;
-            letter-spacing: 1.5px;
-        }
-
-        .card-1 .card-title { color: var(--holo-pink); text-shadow: 0 0 10px rgba(255, 0, 127, 0.5); }
-        .card-2 .card-title { color: var(--holo-cyan); text-shadow: 0 0 10px rgba(0, 240, 255, 0.5); }
-        .card-3 .card-title { color: var(--holo-green); text-shadow: 0 0 10px rgba(0, 255, 136, 0.5); }
-
-        .input-group {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 14px;
-            font-size: 14px;
-        }
-
-        .input-group label {
-            color: #cbd5e1;
-            font-weight: 300;
-        }
-
-        .input-group input {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-            padding: 9px 12px;
-            border-radius: 10px;
-            text-align: right;
-            width: 150px;
-            font-size: 15px;
-            font-family: 'Outfit', sans-serif;
-            transition: all 0.3s ease;
-        }
-
-        .input-group input:focus {
-            outline: none;
-            border-color: var(--holo-cyan);
-            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
-            background: rgba(0, 0, 0, 0.7);
-        }
-
-        .resultado-linea {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-            padding-top: 14px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        /* Sección de Ahorro Programado */
-        .ahorro-box {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 24px;
-            margin-bottom: 30px;
-            border: 1px solid var(--glass-border);
-            border-top: 2px solid var(--holo-purple);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 25px rgba(157, 0, 255, 0.2);
-        }
-
-        .ahorro-title {
-            color: var(--holo-purple);
-            font-size: 15px;
-            font-family: 'Audiowide', cursive, sans-serif;
-            margin-bottom: 18px;
-            letter-spacing: 1.5px;
-            text-shadow: 0 0 10px rgba(157, 0, 255, 0.5);
-        }
-
-        .ahorro-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 14px;
-            color: #cbd5e1;
-        }
-
-        /* Cuadre del Día */
-        .cuadre-box {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 24px;
-            margin-bottom: 30px;
-            border: 1px solid var(--glass-border);
-            border-top: 5px solid var(--holo-yellow);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 25px rgba(255, 234, 0, 0.15);
-        }
-
-        .cuadre-title {
-            color: var(--holo-yellow);
-            font-size: 22px;
-            font-family: 'Audiowide', cursive, sans-serif;
-            margin-bottom: 18px;
-            letter-spacing: 1.5px;
-            text-shadow: 0 0 10px rgba(255, 234, 0, 0.5);
-        }
-
-        .cuadre-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 21px;
-            color: #cbd5e1;
-        }
-
-        .cuadre-diff {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 16px;
-            padding-top: 14px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 21px;
-            font-weight: 700;
-        }
-
-        /* Botón Guardar Holográfico */
-        .btn-guardar {
-            width: 100%;
-            background: linear-gradient(135deg, var(--holo-green), #008f51);
-            color: #030508;
-            border: none;
-            padding: 16px;
-            border-radius: 16px;
-            font-size: 16px;
-            font-weight: 700;
-            font-family: 'Audiowide', cursive, sans-serif;
-            cursor: pointer;
-            margin-bottom: 30px;
-            box-shadow: 0 0 25px rgba(0, 255, 136, 0.4);
-            transition: all 0.3s ease;
-            letter-spacing: 1.5px;
-        }
-
-        .btn-guardar:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 35px rgba(0, 255, 136, 0.7);
-        }
-
-        /* Historial */
-        .historial-container {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 24px;
-            border: 1px solid var(--glass-border);
-            border-top: 2px solid var(--holo-cyan);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 12px;
-            font-size: 14px;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        th {
-            color: var(--holo-cyan);
-            font-weight: 600;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -312,19 +12,19 @@
         <h1>CONTROL FINANCIERO</h1>
 
         <!-- Selector de Fecha -->
-        <div class="fecha-container">
+        <div class="campo-fecha">
             <label for="fecha">FECHA:</label>
             <input type="date" id="fecha">
         </div>
 
         <!-- SECCIÓN INDEPENDIENTE DE INGRESOS (TRABAJO BRUTO) -->
-        <div style="background: var(--glass-bg); backdrop-filter: blur(20px); border-radius: 24px; padding: 24px; margin-bottom: 25px; border: 1px solid var(--glass-border); border-top: 2px solid var(--holo-green); box-shadow: 0 15px 35px rgba(0,0,0,0.5), 0 0 25px rgba(0,255,136,0.2);">
-            <div style="font-size: 15px; font-family: 'Audiowide', cursive; color: var(--holo-green); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(0,255,136,0.5);">
+        <div class="card card-ingresos">
+            <div class="ingresos-title">
                 💵 INGRESOS
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
-                <label for="trabajo" style="color: #ffffff; font-size: 14px; font-weight: 600;">Trabajo (Bruto):</label>
-                <input type="text" id="trabajo" placeholder="0" style="background: rgba(0,0,0,0.4); border: 1px solid var(--holo-green); color: var(--holo-green); padding: 9px 12px; border-radius: 10px; text-align: right; width: 160px; font-size: 15px; font-family: 'Outfit', sans-serif; box-shadow: 0 0 10px rgba(0,255,136,0.2);">
+            <div class="ingresos-row">
+                <label for="trabajo">Trabajo (Bruto):</label>
+                <input type="text" id="trabajo" placeholder="0">
             </div>
         </div>
 
@@ -354,7 +54,7 @@
 
                 <div class="resultado-linea">
                     <span>Ganancia Neto:</span>
-                    <span id="gananciaNeto" style="color: var(--holo-pink); text-shadow: 0 0 10px rgba(255, 0, 127, 0.5);">$0</span>
+                    <span id="gananciaNeto" class="text-pink">$0</span>
                 </div>
             </div>
 
@@ -385,7 +85,7 @@
 
                 <div class="resultado-linea">
                     <span>Gasto Total:</span>
-                    <span id="gastoTotal" style="color: var(--holo-pink); text-shadow: 0 0 10px rgba(255, 0, 127, 0.5);">$0</span>
+                    <span id="gastoTotal" class="text-pink">$0</span>
                 </div>
             </div>
 
@@ -406,9 +106,9 @@
                     <input type="text" id="pendiente" placeholder="0">
                 </div>
 
-                <div class="resultado-linea" style="margin-top: 45px;">
+                <div class="resultado-linea margen-extra">
                     <span>Tengo Total:</span>
-                    <span id="tengoTotal" style="color: var(--holo-green); text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);">$0</span>
+                    <span id="tengoTotal" class="text-green">$0</span>
                 </div>
             </div>
 
@@ -434,11 +134,9 @@
         <!-- Botón Guardar -->
         <button id="btnGuardar" class="btn-guardar">GUARDAR REGISTRO DEL DÍA</button>
 
-       
-
         <!-- Historial Registrado -->
         <div class="historial-container">
-            <div class="card-title" style="color: var(--holo-cyan); margin-bottom: 15px; text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);">HISTORIAL REGISTRADO</div>
+            <div class="card-title titulo-historial-sup">HISTORIAL REGISTRADO</div>
             <div id="historial"></div>
         </div>
         <br><br>
@@ -447,14 +145,14 @@
         <div class="ahorro-box">
             <div class="ahorro-title">AHORRO PROGRAMADO PARA GASTOS FIJOS</div>
             
-            <details style="margin-bottom: 15px;">
-                <summary style="cursor: pointer; color: var(--holo-purple); font-size: 14px; font-weight: 600; text-shadow: 0 0 8px rgba(157, 0, 255, 0.5);">▶ Ver detalle y agregar gastos fijos</summary>
-                <div style="margin-top: 15px;">
-                    <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
-                        <input type="text" id="nombreFijo" placeholder="Concepto (ej. Arriendo)" style="background: rgba(0,0,0,0.5); border: 1px solid var(--holo-purple); color:white; padding:6px 10px; border-radius:8px; flex:2; font-size:14px; font-family:'Outfit',sans-serif;">
-                        <input type="text" id="valorFijo" placeholder="Valor Mes ($)" style="background: rgba(0,0,0,0.5); border: 1px solid var(--holo-purple); color:white; padding:6px 10px; border-radius:8px; flex:1; font-size:14px; font-family:'Outfit',sans-serif;">
-                        <input type="number" id="diaFijo" placeholder="Día" min="1" max="31" style="background: rgba(0,0,0,0.5); border: 1px solid var(--holo-purple); color:white; padding:6px 10px; border-radius:8px; width: 70px; font-size:14px; font-family:'Outfit',sans-serif;">
-                        <button onclick="agregarGastoFijo()" style="background: var(--holo-purple); border:none; color:white; font-weight:bold; padding:6px 14px; border-radius:8px; cursor:pointer; box-shadow: 0 0 10px rgba(157, 0, 255, 0.5); font-family:'Audiowide',cursive;">Agregar</button>
+            <details class="detalle-fijos">
+                <summary class="summary-fijos">▶ Ver detalle y agregar gastos fijos</summary>
+                <div class="contenido-fijos">
+                    <div class="form-fijos-row">
+                        <input type="text" id="nombreFijo" placeholder="Concepto (ej. Arriendo)" class="input-concepto">
+                        <input type="text" id="valorFijo" placeholder="Valor Mes ($)" class="input-valor">
+                        <input type="number" id="diaFijo" placeholder="Día" min="1" max="31" class="input-dia">
+                        <button type="button" onclick="agregarGastoFijo()" class="btn-agregar-fijo">Agregar</button>
                     </div>
                     <table>
                         <thead>
@@ -474,29 +172,28 @@
                 </div>
             </details>
 
-            <div style="border-top: 1px dashed rgba(255,255,255,0.15); margin: 15px 0;"></div>
+            <div class="dashed-divider"></div>
 
             <div class="ahorro-row">
                 <span>Ahorro diario total requerido:</span>
-                <strong id="totalAhorroDiarioSugerido" style="color: var(--holo-purple);">$0</strong>
+                <strong id="totalAhorroDiarioSugerido" class="text-purple">$0</strong>
             </div>
             <div class="ahorro-row">
                 <span>Meta sugerida acumulada a hoy:</span>
-                <strong id="totalAhorroSugerido" style="color: var(--holo-purple);">$0</strong>
+                <strong id="totalAhorroSugerido" class="text-purple">$0</strong>
             </div>
-            <div class="ahorro-row" style="font-size: 15px; margin-top: 8px;">
-                <span style="color: var(--holo-green); font-weight: bold;">Libre:</span>
-                <strong id="totalLibre" style="color: var(--holo-green);">$0</strong>
+            <div class="ahorro-row row-libre">
+                <span>Libre:</span>
+                <strong id="totalLibre" class="text-green">$0</strong>
             </div>
-            <div class="ahorro-row" style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px; margin-top: 10px; font-size: 15px;">
-                <span style="color: var(--holo-green); font-weight: bold;">Total Saldo (Incluyendo pendiente):</span>
-                <strong id="totalSaldoActualFijo" style="color: var(--holo-green);">$0</strong>
+            <div class="ahorro-row row-total-saldo">
+                <span>Total Saldo (Incluyendo pendiente):</span>
+                <strong id="totalSaldoActualFijo" class="text-green">$0</strong>
             </div>
         </div>
 
     </div>
 
-    <!-- Archivo JavaScript -->
     <script src="script.js"></script>
 </body>
 </html>
