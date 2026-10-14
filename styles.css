@@ -94,6 +94,7 @@ h1 {
     background: #030712;
     outline: none;
     box-shadow: inset 0 0 8px rgba(56, 189, 248, 0.2);
+    color-scheme: dark;
 }
 
 /* Tarjetas Estilo Glassmorphism Futurista (Fila Superior) */
@@ -137,7 +138,7 @@ h1 {
 .card:nth-of-type(3) { border-top: 3px solid var(--neon-cyan); }
 .card:nth-of-type(3) h2 { color: var(--neon-cyan); text-shadow: 0 0 10px rgba(56, 189, 248, 0.4); }
 
-/* Tarjeta Cuadre del Día (Exactamente Centrada en la fila 2) */
+/* Tarjeta Cuadre del Día */
 .resumen-card {
     grid-column: 1 / span 12 !important;
     background: linear-gradient(135deg, rgba(20, 83, 45, 0.4) 0%, rgba(15, 23, 42, 0.8) 100%);
@@ -161,7 +162,7 @@ h1 {
     text-shadow: 0 0 10px rgba(250, 204, 21, 0.4);
 }
 
-/* Botón Guardar Principal (Ocupa su propia línea de 12 columnas) */
+/* Botón Guardar Principal */
 #btnGuardar {
     grid-column: 1 / -1 !important;
     width: 100%;
@@ -184,7 +185,7 @@ h1 {
     filter: brightness(1.1);
 }
 
-/* Sección Ahorro Programado (Ocupa el ancho total de 12 columnas) */
+/* Sección Ahorro Programado */
 .card-ancho-total, 
 .card:last-of-type {
     grid-column: 1 / -1 !important;
@@ -205,33 +206,8 @@ details > summary {
     padding: 4px 0;
     outline: none;
 }
-.btn-agregar-fijo {
-    background: linear-gradient(135deg, #22c55e, #16a34a);
-    color: #ffffff;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
-    transition: transform 0.1s ease, box-shadow 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    height: 42px; /* Para que se alinee perfectamente con la altura de los inputs */
-}
 
-.btn-agregar-fijo:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(34, 197, 94, 0.4);
-}
-
-.btn-agregar-fijo:active {
-    transform: translateY(1px);
-}
-
-/* Formulario de Gastos Fijos Futurista */
+/* Formulario de Gastos Fijos */
 .form-fijo {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr auto;
@@ -284,6 +260,7 @@ details > summary {
     cursor: pointer;
     box-shadow: 0 0 15px rgba(192, 132, 252, 0.3);
     transition: all 0.2s ease;
+    height: 42px;
 }
 .form-fijo #btnAgregarFijo:hover {
     box-shadow: 0 0 25px rgba(192, 132, 252, 0.7);
@@ -318,27 +295,6 @@ details > summary {
 .tabla-fijos td:first-child { border-left: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px 0 0 8px; }
 .tabla-fijos td:last-child { border-right: 1px solid rgba(255, 255, 255, 0.05); border-radius: 0 8px 8px 0; }
 
-.btn-eliminar {
-    color: var(--neon-pink);
-    background: rgba(244, 63, 94, 0.1);
-    border: 1px solid rgba(244, 63, 94, 0.3);
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-.btn-editar {
-    color: var(--neon-cyan);
-    background: rgba(56, 189, 248, 0.1);
-    border: 1px solid rgba(56, 189, 248, 0.3);
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-right: 6px;
-    font-weight: 600;
-}
-
 /* Título de Historial Registrado */
 .titulo-historial {
     grid-column: 1 / -1 !important;
@@ -358,58 +314,12 @@ details > summary {
 #historial {
     grid-column: 1 / -1 !important;
     width: 100%;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 20px;
 }
 
-.bloque-semana, .item-historial {
-    background: var(--bg-card);
-    backdrop-filter: blur(12px);
-    padding: 20px;
-    border-radius: 16px;
-    border: 1px solid rgba(250, 204, 21, 0.25);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-}
-
-.encabezado-semana {
-    font-weight: 800;
-    font-size: 16px;
-    color: var(--neon-yellow);
-    margin-bottom: 14px;
-    border-bottom: 1px dashed rgba(250, 204, 21, 0.3);
-    padding-bottom: 8px;
-    text-shadow: 0 0 8px rgba(250, 204, 21, 0.3);
-}
-
-/* ========================================================== */
-/* ESTILOS ESPECÍFICOS PARA EL TEXTO DEL HISTORIAL (VISIBILIDAD) */
-/* ========================================================== */
-.historial-detalles {
-    font-size: 33px;
-    color: #ffffff; 
-    line-height: 1.7;
-    font-weight: 500;
-}
-
-.historial-detalles span, 
-.historial-detalles strong {
-    color: #ffffff;
-}
-
-.historial-detalles .trabajo, 
-.historial-detalles strong:nth-child(odd),
-.historial-detalles b {
-    color: var(--neon-green); 
-}
-
-.historial-detalles .gasto,
-.historial-detalles .negativo {
-    color: var(--neon-pink); 
-}
-/* ========================================================== */
-
-/* Campos de entrada numéricos estilo Terminal */
+/* Campos de entrada numéricos */
 .input-group {
     display: flex;
     justify-content: space-between;
@@ -457,9 +367,7 @@ details > summary {
     font-size: 20px;
     color: var(--neon-purple);
     font-weight: 800;
-    text-shadow: 0 0 10px rgba(113, 119, 115, 0.3);
 }
-
 
 .resultado-item2 {
     display: flex;
@@ -467,7 +375,7 @@ details > summary {
     align-items: center;
     margin-top: 14px;
     padding-top: 12px;
-    border-top: 1px dashed rgba(29, 185, 63, 0.1);
+    border-top: 1px dashed rgba(34, 197, 94, 0.2);
     font-size: 22px;
     color: var(--neon-green);
     font-weight: 800;
@@ -476,41 +384,14 @@ details > summary {
     font-size: 22px;
     color: var(--neon-green);
     font-weight: 1000;
-    text-shadow: 0 0 10px rgba(113, 119, 115, 0.3);
+    text-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
 }
 
-
-/* Checkbox Pagado Neón */
-.checkbox-pagado {
-    width: 18px;
-    height: 18px;
-    accent-color: var(--neon-purple);
-    cursor: pointer;
-}
-
-.fila-pagada td {
-    opacity: 0.3;
-    text-decoration: line-through;
-}
-
-/* ========================================================== */
-/* CORRECCIÓN DE LETRA BLANCA EN TARJETAS DE FONDO CLARO      */
-/* ========================================================== */
-
-/* Forzar texto negro (#111827) en los contenedores de historial / tarjetas que tengan fondo claro */
-.bloque-semana div[style*="background"], 
-.item-historial div[style*="background"],
-.bloque-semana div[style*="background-color"],
-.item-historial div[style*="background-color"] {
-    color: #111827 !important;
-}
-
-/* Forzar texto negro en todos los párrafos y textos dentro de esas tarjetas con fondo claro */
-.bloque-semana div[style*="background"] p, 
-.bloque-semana div[style*="background"] span,
-.bloque-semana div[style*="background"] strong,
-.item-historial div[style*="background"] p, 
-.item-historial div[style*="background"] span,
-.item-historial div[style*="background"] strong {
-    color: #111827 !important;
+@media (max-width: 768px) {
+    .card {
+        grid-column: span 12 !important;
+    }
+    .form-fijo {
+        grid-template-columns: 1fr;
+    }
 }
